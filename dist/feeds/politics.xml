@@ -6,7 +6,7 @@
     <description><![CDATA[قراءات معمقة وتحليلات للأحداث والتطورات السياسية إقليمياً ودولياً - خلاصة RSS لقسم شؤون سياسية]]></description>
     <language>ar</language>
     <copyright><![CDATA[جميع الحقوق محفوظة © شبكة برق الإعلامية 2026]]></copyright>
-    <lastBuildDate>Thu, 22 Oct 2026 01:08:50 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 01:10:45 +0000</lastBuildDate>
     <generator>BARQ Editorial RSS Studio 2.0</generator>
     <atom:link href="https://barq-media.github.io/rss-studio/feeds/politics.xml" rel="self" type="application/rss+xml" />
     <image>
@@ -14,5 +14,16 @@
       <title><![CDATA[برق | استوديو التقارير التحريرية | شؤون سياسية]]></title>
       <link>https://barq-media.github.io/rss-studio/#category-politics</link>
     </image>
+    <item>
+      <title><![CDATA[تقرير اختبار المسارات المعتمد]]></title>
+      <link>https://barq-media.github.io/rss-studio/articles/test-route-report.html</link>
+      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/test-route-report.html</guid>
+      <pubDate>Thu, 22 Oct 2026 01:10:45 +0000</pubDate>
+      <dc:creator><![CDATA[محرر تجريبي]]></dc:creator>
+      <category><![CDATA[شؤون سياسية]]></category>
+      <description><![CDATA[<p><strong>موجز تجريبي</strong></p>
+<p>محتوى التقرير التحريري</p>]]></description>
+      <content:encoded><![CDATA[<p>محتوى التقرير التحريري</p>]]></content:encoded>
+    </item>
   </channel>
 </rss>
