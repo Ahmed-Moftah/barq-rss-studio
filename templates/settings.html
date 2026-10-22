@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}إعدادات الاستوديو والنشر | استوديو برق{% endblock %}
+{% block page_title %}إعدادات الاستوديو والنشر على GitHub Pages{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">إعدادات الهوية التحريرية وقنوات النشر</h3>
+    </div>
+    <div class="card-body">
+        <form method="POST">
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">اسم المنصة / الموقع</label>
+                    <input type="text" name="site_name" class="form-input" value="{{ settings.site_name }}" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">الشعار التحريري (Slogan)</label>
+                    <input type="text" name="site_slogan" class="form-input" value="{{ settings.site_slogan }}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">وصف الموقع (يظهر في القناة الرئيسية لخلاصة RSS &lt;description&gt;)</label>
+                <textarea name="site_description" class="form-textarea" rows="2">{{ settings.site_description }}</textarea>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">الرابط العام المنشور (GitHub Pages Base URL) *</label>
+                    <input type="url" name="public_base_url" class="form-input" value="{{ settings.public_base_url }}" style="direction: ltr;" placeholder="https://username.github.io/repo-name" required>
+                    <div class="form-hint">يُستخدم كأساس لبناء روابط المقالات &lt;link&gt; والخلاصات &lt;atom:link&gt;.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">المشرف التحريري (Managing Editor Email)</label>
+                    <input type="text" name="managing_editor" class="form-input" value="{{ settings.managing_editor }}">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label">اسم الريموت في Git (Git Remote)</label>
+                    <input type="text" name="git_remote" class="form-input" value="{{ settings.git_remote }}" style="direction: ltr;">
+                    <div class="form-hint">الافتراضي هو origin</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">فرع النشر على GitHub Pages (Git Branch)</label>
+                    <input type="text" name="git_branch" class="form-input" value="{{ settings.git_branch }}" style="direction: ltr;">
+                    <div class="form-hint">الافتراضي هو gh-pages أو main</div>
+                </div>
+            </div>
+
+            <div style="margin-top: 1.5rem; display: flex; gap: 0.75rem;">
+                <button type="submit" class="btn btn-primary">حفظ الإعدادات 💾</button>
+                <button type="button" class="btn btn-blue btn-trigger-publish">توليد ونشر فوري 🚀</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Detailed Logs of Generation and Git Actions -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">سجل عمليات التوليد والنشر (Audit Logs)</h3>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>معرّف</th>
+                    <th>العملية</th>
+                    <th>الحالة</th>
+                    <th>الوصف</th>
+                    <th>التفاصيل التقنية</th>
+                    <th>التوقيت</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if logs %}
+                    {% for l in logs %}
+                        <tr>
+                            <td>#{{ l.id }}</td>
+                            <td><code>{{ l.action }}</code></td>
+                            <td>
+                                {% if l.status == 'success' %}
+                                    <span class="badge badge-published">ناجح</span>
+                                {% elif l.status == 'info' %}
+                                    <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">معلومة</span>
+                                {% else %}
+                                    <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">{{ l.status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ l.message }}</td>
+                            <td style="font-family: monospace; font-size: 0.75rem; color: var(--text-dim); max-width: 250px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">
+                                {{ l.details }}
+                            </td>
+                            <td style="font-size: 0.82rem; color: var(--text-muted);">{{ l.created_at[:19].replace('T', ' ') }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2rem; color: var(--text-muted);">
+                            لا توجد سجلات حتى الآن.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

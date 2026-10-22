@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {% if is_new %}تحرير تقرير جديد | استوديو برق{% else %}تعديل التقرير: {{ report.title }} | استوديو برق{% endif %}
+{% endblock %}
+
+{% block page_title %}
+    {% if is_new %}صياغة تقرير تحريري جديد{% else %}تعديل التقرير التحريري{% endif %}
+{% endblock %}
+
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+    <div>
+        <p style="color: var(--text-muted); font-size: 0.95rem;">
+            أدخل محتوى التقرير يدوياً أو استخدم أداة الاستيراد الذكي للتقارير الصادرة من ChatGPT.
+        </p>
+    </div>
+    <div style="display: flex; gap: 0.75rem;">
+        <button type="button" class="btn btn-secondary" data-modal-target="modal-chatgpt-quick">
+            <span>استيراد مسودة من ChatGPT</span> 🤖
+        </button>
+        {% if not is_new %}
+            <a href="{{ url_for('report_preview', report_id=report_id) }}" class="btn btn-secondary">
+                <span>معاينة القراءة</span> 👁️
+            </a>
+        {% endif %}
+    </div>
+</div>
+
+<form method="POST" id="report-editor-form">
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">البيانات الأساسية للتقرير</h3>
+            <div style="display: flex; align-items: center; gap: 1rem;">
+                <label style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">حالة النشر:</label>
+                <select name="status" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.88rem;">
+                    <option value="draft" {% if report.status == 'draft' %}selected{% endif %}>مسودة (غير مدرج في الخلاصات)</option>
+                    <option value="published" {% if report.status == 'published' or is_new %}selected{% endif %}>منشور (يُدرج فوراً في خلاصات RSS 2.0)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="card-body">
+            <!-- Title -->
+            <div class="form-group">
+                <label class="form-label" for="field-title">عنوان التقرير التحريري *</label>
+                <input type="text" id="field-title" name="title" class="form-input" style="font-size: 1.25rem; font-weight: 700;" placeholder="اكتب عنواناً صحفياً دقيقاً وجذاباً..." value="{{ report.title or '' }}" required>
+            </div>
+
+            <!-- Slug & Category -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="field-category">القسم التحريري *</label>
+                    <select id="field-category" name="category" class="form-select" required>
+                        {% for cat in categories %}
+                            <option value="{{ cat.id }}" {% if report.category == cat.id %}selected{% endif %}>
+                                {{ cat.name }} ({{ cat.description }})
+                            </option>
+                        {% endfor %}
+                    </select>
+                    <div class="form-hint">يحدد خلاصة RSS المتخصصة التي سيظهر بها التقرير بجانب الخلاصة الرئيسية.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="field-slug">الاسم اللطيف للرابط (Slug)</label>
+                    <input type="text" id="field-slug" name="slug" class="form-input" placeholder="اتركه فارغاً للتوليد التلقائي من العنوان" value="{{ report.slug or '' }}">
+                    <div class="form-hint">يستخدم في رابط المقال الثابت على GitHub Pages: /articles/{slug}.html</div>
+                </div>
+            </div>
+
+            <!-- Author & Source -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="field-author">المعد / الكاتب</label>
+                    <input type="text" id="field-author" name="author" class="form-input" placeholder="مثال: فريق تحرير برق / وحدة التحليلات الاقتصادية" value="{{ report.author or 'فريق تحرير برق' }}">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="field-source">المصدر التحريري</label>
+                    <input type="text" id="field-source" name="source" class="form-input" placeholder="مثال: ChatGPT / تدقيق تحريري موسع" value="{{ report.source or 'إعداد تحريري' }}">
+                </div>
+            </div>
+
+            <!-- Summary / Excerpt -->
+            <div class="form-group">
+                <label class="form-label" for="field-summary">الموجز التحريري (Summary / Description)</label>
+                <textarea id="field-summary" name="summary" class="form-textarea" rows="3" placeholder="موجز مكثف يظهر في قارئات RSS ومحركات البحث ومقدمة التقرير...">{{ report.summary or '' }}</textarea>
+                <div class="form-hint">يُعرض داخل وسم &lt;description&gt; في خلاصات RSS 2.0.</div>
+            </div>
+
+            <!-- Image URL & Caption -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label" for="field-image-url">رابط الصورة البارزة (Cover Image URL)</label>
+                    <input type="url" id="field-image-url" name="image_url" class="form-input" placeholder="https://example.com/cover.jpg" value="{{ report.image_url or '' }}">
+                    <div class="form-hint">يتم تضمينها تلقائياً داخل وسم &lt;enclosure&gt; في خلاصات RSS.</div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label" for="field-image-caption">وصف الصورة (Caption)</label>
+                    <input type="text" id="field-image-caption" name="image_caption" class="form-input" placeholder="شرح موجز لموضوع الصورة أو مصدرها" value="{{ report.image_caption or '' }}">
+                </div>
+            </div>
+
+            <!-- Markdown Content Editor -->
+            <div class="form-group">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem;">
+                    <label class="form-label" for="field-content" style="margin-bottom: 0;">نص التقرير بالكامل (يدعم تنسيق Markdown) *</label>
+                    <div style="display: flex; gap: 0.4rem;">
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertMarkdown('## ', '')">عنوان H2</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertMarkdown('### ', '')">عنوان H3</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertMarkdown('**', '**')">عريض</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertMarkdown('> ', '')">اقتباس</button>
+                        <button type="button" class="btn btn-secondary btn-sm" onclick="insertMarkdown('* ', '')">قائمة</button>
+                        <button type="button" id="btn-toggle-preview" class="btn btn-blue btn-sm">
+                            <span>معاينة حية</span> 👁️
+                        </button>
+                    </div>
+                </div>
+
+                <textarea id="field-content" name="content" class="form-textarea" rows="18" style="font-family: 'IBM Plex Sans Arabic', monospace; font-size: 1rem; line-height: 1.8;" placeholder="اكتب أو الصق نص التقرير هنا بصيغة Markdown أو نص عادي..." required>{{ report.content or '' }}</textarea>
+
+                <!-- Live Preview Pane -->
+                <div id="content-preview-container" class="preview-pane" style="display: none; margin-top: 1rem;"></div>
+            </div>
+
+            <!-- Tags -->
+            <div class="form-group">
+                <label class="form-label" for="field-tags">الوسوم والكلمات المفتاحية</label>
+                <input type="text" id="field-tags" name="tags" class="form-input" placeholder="افصل بين الوسوم بفواصل، مثال: ذكاء اصطناعي, سياسة, تحليلات, تجارة" value="{{ report.tags or '' }}">
+            </div>
+        </div>
+
+        <div class="card-header" style="background: rgba(15, 23, 42, 0.4);">
+            <div style="display: flex; gap: 0.75rem;">
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem;">
+                    <span>{% if is_new %}حفظ ونشر التقرير{% else %}حفظ التعديلات{% endif %}</span> 💾
+                </button>
+                <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">إلغاء والعودة</a>
+            </div>
+        </div>
+    </div>
+</form>
+
+<script>
+function insertMarkdown(prefix, suffix) {
+    const textarea = document.getElementById('field-content');
+    if (!textarea) return;
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = textarea.value.substring(start, end);
+    const replacement = prefix + selectedText + suffix;
+    textarea.value = textarea.value.substring(0, start) + replacement + textarea.value.substring(end);
+    textarea.focus();
+    textarea.setSelectionRange(start + prefix.length, start + prefix.length + selectedText.length);
+    if (typeof updateLivePreview === 'function') updateLivePreview();
+}
+</script>
+{% endblock %}

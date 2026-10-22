@@ -1,0 +1,130 @@
+{% extends "base.html" %}
+
+{% block title %}إدارة التقارير التحريرية | استوديو برق{% endblock %}
+{% block page_title %}قائمة التقارير التحريرية{% endblock %}
+
+{% block content %}
+<!-- Search & Filter Card -->
+<div class="card" style="margin-bottom: 1.5rem;">
+    <div class="card-body">
+        <form method="GET" action="{{ url_for('reports_list') }}" style="display: flex; flex-wrap: wrap; gap: 1rem; align-items: flex-end;">
+            <div style="flex: 2; min-width: 220px;">
+                <label class="form-label" style="font-size: 0.85rem;">بحث في العناوين والمحتوى</label>
+                <input type="text" name="q" class="form-input" placeholder="اكتب كلمة مفتاحية للبحث..." value="{{ search_query }}">
+            </div>
+
+            <div style="flex: 1; min-width: 170px;">
+                <label class="form-label" style="font-size: 0.85rem;">القسم التحريري</label>
+                <select name="category" class="form-select">
+                    <option value="">جميع الأقسام</option>
+                    {% for cat in categories %}
+                        <option value="{{ cat.id }}" {% if selected_category == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div style="flex: 1; min-width: 150px;">
+                <label class="form-label" style="font-size: 0.85rem;">حالة النشر</label>
+                <select name="status" class="form-select">
+                    <option value="">جميع الحالات</option>
+                    <option value="published" {% if selected_status == 'published' %}selected{% endif %}>منشور في RSS</option>
+                    <option value="draft" {% if selected_status == 'draft' %}selected{% endif %}>مسودة</option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 0.5rem;">
+                <button type="submit" class="btn btn-secondary">تصفية 🔍</button>
+                <a href="{{ url_for('reports_list') }}" class="btn btn-secondary" title="إعادة تعيين">إلغاء</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Reports Table -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">النتائج ({{ reports|length }} تقرير)</h3>
+        <a href="{{ url_for('report_new') }}" class="btn btn-primary btn-sm">تقرير جديد +</a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 42%;">عنوان التقرير</th>
+                    <th>القسم</th>
+                    <th>الحالة</th>
+                    <th>الكاتب</th>
+                    <th>تاريخ النشر / التحديث</th>
+                    <th style="text-align: left;">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if reports %}
+                    {% for report in reports %}
+                        {% set cat = get_category(report.category) %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 700; font-size: 0.98rem; margin-bottom: 0.2rem;">
+                                    <a href="{{ url_for('report_preview', report_id=report.id) }}" style="color: #ffffff;">
+                                        {{ report.title }}
+                                    </a>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); font-family: monospace; direction: ltr; text-align: right;">
+                                    /articles/{{ report.slug }}.html
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="color: {{ cat.badge_color }}; background: {{ cat.badge_bg }};">
+                                    {{ cat.name }}
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('report_toggle_status', report_id=report.id) }}" method="POST" style="display: inline;">
+                                    {% if report.status == 'published' %}
+                                        <button type="submit" class="badge badge-published" style="cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.4);" title="اضغط للتحويل إلى مسودة">
+                                            ✓ منشور في RSS
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="badge badge-draft" style="cursor: pointer; border: 1px solid rgba(148, 163, 184, 0.4);" title="اضغط للنشر">
+                                            ⏳ مسودة
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td>{{ report.author }}</td>
+                            <td style="font-size: 0.85rem; color: var(--text-muted);">
+                                {% if report.published_at %}
+                                    {{ report.published_at[:10] }}
+                                {% else %}
+                                    {{ report.updated_at[:10] }} (مسودة)
+                                {% endif %}
+                            </td>
+                            <td style="text-align: left;">
+                                <div style="display: inline-flex; gap: 0.4rem;">
+                                    <a href="{{ url_for('report_preview', report_id=report.id) }}" class="btn btn-secondary btn-sm" title="معاينة">
+                                        👁️
+                                    </a>
+                                    <a href="{{ url_for('report_edit', report_id=report.id) }}" class="btn btn-secondary btn-sm" title="تعديل">
+                                        ✏️
+                                    </a>
+                                    <form action="{{ url_for('report_delete', report_id=report.id) }}" method="POST" onsubmit="return confirm('هل تريد بالتأكيد حذف هذا التقرير نهائياً؟');" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="حذف">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                            لا توجد نتائج مطابقة لخيارات التصفية.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

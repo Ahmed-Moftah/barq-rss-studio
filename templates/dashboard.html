@@ -1,0 +1,215 @@
+{% extends "base.html" %}
+
+{% block title %}لوحة التحكم | استوديو برق للتقارير والخلاصات{% endblock %}
+{% block page_title %}لوحة المتابعة التحريرية والخلاصات{% endblock %}
+
+{% block content %}
+<!-- Metrics Stats Grid -->
+<div class="stats-grid">
+    <div class="stat-card">
+        <div class="stat-info">
+            <h4>إجمالي التقارير</h4>
+            <div class="stat-number">{{ stats.total }}</div>
+        </div>
+        <div class="stat-icon" style="color: #60a5fa;">📑</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h4>التقارير المنشورة (في الخلاصات)</h4>
+            <div class="stat-number" style="color: #34d399;">{{ stats.published }}</div>
+        </div>
+        <div class="stat-icon" style="color: #34d399;">📡</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h4>المسودات قيد الإعداد</h4>
+            <div class="stat-number" style="color: #fbbf24;">{{ stats.drafts }}</div>
+        </div>
+        <div class="stat-icon" style="color: #fbbf24;">📝</div>
+    </div>
+
+    <div class="stat-card">
+        <div class="stat-info">
+            <h4>آخر تحديث للخلاصات</h4>
+            <div style="font-size: 0.95rem; font-weight: 600; color: #cbd5e1; margin-top: 0.5rem;">
+                {% if stats.last_build_time %}
+                    {{ stats.last_build_time[:19].replace('T', ' ') }}
+                {% else %}
+                    لم يتم البناء بعد
+                {% endif %}
+            </div>
+        </div>
+        <div class="stat-icon" style="color: #f472b6;">⚡</div>
+    </div>
+</div>
+
+<!-- Category Distribution Bar -->
+<div class="card" style="margin-bottom: 2rem;">
+    <div class="card-header">
+        <h3 class="card-title">توزيع التقارير حسب الأقسام التحريرية</h3>
+        <a href="{{ url_for('feeds_overview') }}" class="btn btn-secondary btn-sm">استعراض خلاصات الأقسام 📡</a>
+    </div>
+    <div class="card-body" style="display: flex; flex-wrap: wrap; gap: 0.85rem; align-items: center;">
+        {% for cat in categories %}
+            {% set count = stats.by_category.get(cat.id, 0) %}
+            <a href="{{ url_for('reports_list', category=cat.id) }}" style="text-decoration: none;">
+                <div style="display: flex; align-items: center; gap: 0.5rem; background: var(--surface-subtle); border: 1px solid var(--border-subtle); padding: 0.5rem 0.9rem; border-radius: 8px;">
+                    <span style="display: inline-block; width: 10px; height: 10px; border-radius: 50%; background: {{ cat.badge_color }};"></span>
+                    <span style="font-weight: 600; color: #f8fafc; font-size: 0.9rem;">{{ cat.name }}</span>
+                    <span style="background: rgba(255, 255, 255, 0.1); padding: 0.1rem 0.5rem; border-radius: 10px; font-size: 0.8rem; color: #cbd5e1;">{{ count }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+</div>
+
+<!-- Quick Action Toolbar -->
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 2rem; justify-content: space-between; align-items: center;">
+    <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+        <a href="{{ url_for('report_new') }}" class="btn btn-primary">
+            <span>تحرير تقرير جديد</span> ✍️
+        </a>
+        <a href="{{ url_for('report_new') }}" class="btn btn-secondary" onclick="setTimeout(() => { document.querySelector('[data-modal-target=modal-chatgpt-quick]')?.click(); }, 150);">
+            <span>استيراد تقرير ChatGPT</span> 🤖
+        </a>
+        <a href="{{ url_for('feeds_overview') }}" class="btn btn-secondary">
+            <span>دليل خلاصات RSS</span> 📡
+        </a>
+    </div>
+    
+    <div>
+        <button type="button" class="btn btn-blue btn-trigger-publish">
+            <span>توليد الخلاصات والنشر إلى GitHub</span> 🚀
+        </button>
+    </div>
+</div>
+
+<!-- Recent Reports Table -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">أحدث التقارير التحريرية</h3>
+        <a href="{{ url_for('reports_list') }}" class="btn btn-secondary btn-sm">عرض كل التقارير ←</a>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th style="width: 40%;">عنوان التقرير</th>
+                    <th>القسم التحريري</th>
+                    <th>الحالة</th>
+                    <th>الكاتب / المصدر</th>
+                    <th>تاريخ التحديث</th>
+                    <th style="text-align: left;">الإجراءات</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if reports %}
+                    {% for report in reports %}
+                        {% set cat = get_category(report.category) %}
+                        <tr>
+                            <td>
+                                <div style="font-weight: 700; font-size: 0.98rem; margin-bottom: 0.2rem;">
+                                    <a href="{{ url_for('report_preview', report_id=report.id) }}" style="color: #ffffff;">
+                                        {{ report.title }}
+                                    </a>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--text-dim); font-family: monospace; direction: ltr; text-align: right;">
+                                    /articles/{{ report.slug }}.html
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge" style="color: {{ cat.badge_color }}; background: {{ cat.badge_bg }};">
+                                    {{ cat.name }}
+                                </span>
+                            </td>
+                            <td>
+                                <form action="{{ url_for('report_toggle_status', report_id=report.id) }}" method="POST" style="display: inline;">
+                                    {% if report.status == 'published' %}
+                                        <button type="submit" class="badge badge-published" style="cursor: pointer; border: 1px solid rgba(16, 185, 129, 0.4);" title="اضغط للتحويل إلى مسودة">
+                                            ✓ منشور في RSS
+                                        </button>
+                                    {% else %}
+                                        <button type="submit" class="badge badge-draft" style="cursor: pointer; border: 1px solid rgba(148, 163, 184, 0.4);" title="اضغط للنشر المباشر">
+                                            ⏳ مسودة
+                                        </button>
+                                    {% endif %}
+                                </form>
+                            </td>
+                            <td>
+                                <div style="font-weight: 500;">{{ report.author }}</div>
+                                <div style="font-size: 0.78rem; color: var(--text-dim);">{{ report.source }}</div>
+                            </td>
+                            <td style="font-size: 0.85rem; color: var(--text-muted);">
+                                {{ report.updated_at[:10] }}
+                            </td>
+                            <td style="text-align: left;">
+                                <div style="display: inline-flex; gap: 0.4rem;">
+                                    <a href="{{ url_for('report_preview', report_id=report.id) }}" class="btn btn-secondary btn-sm" title="معاينة قراءة المقال">
+                                        👁️
+                                    </a>
+                                    <a href="{{ url_for('report_edit', report_id=report.id) }}" class="btn btn-secondary btn-sm" title="تعديل">
+                                        ✏️
+                                    </a>
+                                    <form action="{{ url_for('report_delete', report_id=report.id) }}" method="POST" onsubmit="return confirm('هل أنت متأكد من حذف هذا التقرير نهائياً؟');" style="display: inline;">
+                                        <button type="submit" class="btn btn-danger btn-sm" title="حذف">
+                                            🗑️
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; padding: 2.5rem; color: var(--text-muted);">
+                            لا توجد تقارير تحريرية مسجلة حتى الآن. ابدأ بكتابة تقرير جديد أو استيراد مسودة من ChatGPT.
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<!-- Recent Publish Logs -->
+{% if logs %}
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">سجل عمليات التوليد والنشر الأخيرة</h3>
+        <span style="font-size: 0.8rem; color: var(--text-muted);">تتبع آلي</span>
+    </div>
+    <div class="table-responsive">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>العملية</th>
+                    <th>الحالة</th>
+                    <th>الوصف</th>
+                    <th>التاريخ والتوقيت</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in logs %}
+                    <tr>
+                        <td style="font-family: monospace; font-size: 0.85rem;">{{ log.action }}</td>
+                        <td>
+                            {% if log.status == 'success' %}
+                                <span class="badge badge-published">ناجح</span>
+                            {% elif log.status == 'info' %}
+                                <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">معلومة</span>
+                            {% else %}
+                                <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">{{ log.status }}</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ log.message }}</td>
+                        <td style="font-size: 0.85rem; color: var(--text-muted);">{{ log.created_at[:19].replace('T', ' ') }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
+{% endblock %}

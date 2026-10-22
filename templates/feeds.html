@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}دليل خلاصات RSS 2.0 | استوديو برق{% endblock %}
+{% block page_title %}دليل خلاصات RSS متعددة التصنيفات{% endblock %}
+
+{% block content %}
+<div style="margin-bottom: 2rem;">
+    <p style="color: var(--text-muted); font-size: 1rem;">
+        جميع الخلاصات المولدة متوافقة 100% مع مواصفات <strong>RSS 2.0</strong> الرسمية مع دعم وسوم Atom وContent:encoded وترميز CDATA للنصوص العربية.
+    </p>
+</div>
+
+<!-- Master RSS Feed Card -->
+<div class="card" style="border: 2px solid rgba(245, 158, 11, 0.4); margin-bottom: 2rem;">
+    <div class="card-header" style="background: rgba(245, 158, 11, 0.08);">
+        <div>
+            <span class="badge" style="background: #f59e0b; color: #000; font-weight: 700; margin-bottom: 0.35rem;">الخلاصة الموحدة</span>
+            <h3 class="card-title" style="font-size: 1.3rem;">خلاصة جميع التقارير التحريرية (Master RSS Feed)</h3>
+        </div>
+        <div style="display: flex; gap: 0.5rem;">
+            <a href="{{ url_for('serve_master_rss') }}" target="_blank" class="btn btn-primary btn-sm">
+                <span>فتح الخلاصة محلياً</span> 📡
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <p style="font-size: 0.95rem; color: #cbd5e1; margin-bottom: 1.25rem;">
+            تتضمن كافة التقارير التحريرية المنشورة عبر مختلف الأقسام، مرتبة زمنياً من الأحدث إلى الأقدم مع النصوص الكاملة والصور البارزة والبيانات الوصفية.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 0.85rem;">
+            <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">رابط الخلاصة على GitHub Pages (للنشر العام):</label>
+                <div class="copy-badge-bar">
+                    <span style="flex-grow: 1;">{{ public_base_url }}/feed.xml</span>
+                    <button class="btn btn-secondary btn-sm btn-copy" data-copy="{{ public_base_url }}/feed.xml">نسخ الرابط 📋</button>
+                </div>
+            </div>
+
+            <div>
+                <label style="font-size: 0.8rem; color: var(--text-muted); display: block; margin-bottom: 0.3rem;">رابط بديل متوافق مع كافة القارئات (rss.xml):</label>
+                <div class="copy-badge-bar">
+                    <span style="flex-grow: 1;">{{ public_base_url }}/rss.xml</span>
+                    <button class="btn btn-secondary btn-sm btn-copy" data-copy="{{ public_base_url }}/rss.xml">نسخ الرابط 📋</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Category Feeds Grid -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">خلاصات الأقسام التحريرية المتخصصة</h3>
+        <span style="font-size: 0.85rem; color: var(--text-muted);">{{ build_info.category_feeds|length }} خلاصة مستقلة</span>
+    </div>
+    <div class="card-body">
+        <div class="stats-grid" style="grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));">
+            {% for cat in build_info.category_feeds %}
+                {% set cat_meta = get_category(cat.id) %}
+                <div style="background: var(--surface-subtle); border: 1px solid var(--border-subtle); border-radius: 12px; padding: 1.4rem; display: flex; flex-direction: column; justify-content: space-between;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.6rem;">
+                            <span class="badge" style="color: {{ cat_meta.badge_color }}; background: {{ cat_meta.badge_bg }}; font-size: 0.85rem;">
+                                {{ cat.name }}
+                            </span>
+                            <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 600;">
+                                {{ cat.count }} تقرير منشور
+                            </span>
+                        </div>
+                        <p style="font-size: 0.88rem; color: #cbd5e1; margin-bottom: 1rem;">
+                            {{ cat_meta.description }}
+                        </p>
+                    </div>
+
+                    <div>
+                        <div class="copy-badge-bar" style="margin-bottom: 0.75rem; font-size: 0.78rem;">
+                            <span style="flex-grow: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">{{ cat.url }}</span>
+                            <button class="btn-copy" data-copy="{{ cat.url }}" style="background: transparent; border: none; color: #38bdf8; cursor: pointer;">📋</button>
+                        </div>
+                        <div style="display: flex; gap: 0.5rem;">
+                            <a href="{{ url_for('serve_category_rss', category_id=cat.id) }}" target="_blank" class="btn btn-secondary btn-sm" style="flex: 1; justify-content: center;">
+                                معاينة XML 📡
+                            </a>
+                            <a href="{{ url_for('reports_list', category=cat.id) }}" class="btn btn-secondary btn-sm">
+                                التقارير 📑
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<!-- Reader Integration Guide -->
+<div class="card">
+    <div class="card-header">
+        <h3 class="card-title">دليل ربط خلاصات برق بالمنصات والقارئات</h3>
+    </div>
+    <div class="card-body" style="font-size: 0.95rem; color: #cbd5e1; line-height: 1.8;">
+        <ul style="padding-right: 1.5rem;">
+            <li style="margin-bottom: 0.5rem;">
+                <strong>قارئات RSS القياسية (Feedly, Inoreader, NetNewsWire):</strong> انسخ أي رابط من الروابط أعلاه وضعه في حقل إضافة الخلاصة (Add Feed).
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+                <strong>بوتات تيليجرام وتنبيهات سلاك:</strong> يمكن تزويد بوتات RSS بروابط الأقسام المتخصصة لإرسال تنبيه فوري بكل تقرير جديد يُنشر.
+            </li>
+            <li style="margin-bottom: 0.5rem;">
+                <strong>الأرشفة والنشر التلقائي عبر GitHub Pages:</strong> بمجرد الضغط على زر "نشر إلى GitHub"، يتم تحديث ملفات XML الثابتة تلقائياً واستضافتها مجاناً دون الحاجة لأي خادم وسيط.
+            </li>
+        </ul>
+    </div>
+</div>
+{% endblock %}

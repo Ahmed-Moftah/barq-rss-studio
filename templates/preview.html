@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+
+{% block title %}{{ report.title }} | استوديو برق{% endblock %}
+{% block page_title %}معاينة التقرير التحريري{% endblock %}
+
+{% block content %}
+<!-- Top Action Toolbar -->
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div style="display: flex; gap: 0.75rem; align-items: center;">
+        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary btn-sm">← لوحة التحكم</a>
+        <a href="{{ url_for('report_edit', report_id=report.id) }}" class="btn btn-primary btn-sm">
+            <span>تعديل التقرير</span> ✏️
+        </a>
+        <form action="{{ url_for('report_toggle_status', report_id=report.id) }}" method="POST" style="display: inline;">
+            {% if report.status == 'published' %}
+                <button type="submit" class="btn btn-secondary btn-sm" style="color: #fb7185;">
+                    تحويل إلى مسودة (إلغاء النشر)
+                </button>
+            {% else %}
+                <button type="submit" class="btn btn-primary btn-sm">
+                    نشر في خلاصات RSS الآن 📡
+                </button>
+            {% endif %}
+        </form>
+    </div>
+
+    <div style="display: flex; gap: 0.5rem; align-items: center;">
+        <span style="font-size: 0.85rem; color: var(--text-muted);">حالة التقرير:</span>
+        {% if report.status == 'published' %}
+            <span class="badge badge-published">منشور في خلاصات RSS</span>
+        {% else %}
+            <span class="badge badge-draft">مسودة</span>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Editorial Reading View Container -->
+<div style="max-width: 860px; margin: 0 auto 3rem;">
+    <article class="card" style="padding: 2.5rem; border-radius: 16px;">
+        <!-- Header Metadata -->
+        <div style="display: flex; flex-wrap: wrap; gap: 0.8rem; align-items: center; margin-bottom: 1.5rem; font-size: 0.85rem;">
+            <span class="badge" style="color: {{ category.badge_color }}; background: {{ category.badge_bg }}; font-size: 0.85rem; padding: 0.35rem 0.85rem;">
+                {{ category.name }}
+            </span>
+            <span style="color: var(--text-muted);">✍️ {{ report.author }}</span>
+            <span style="color: var(--text-muted);">⏳ قراءة {{ report.reading_time }} دقائق</span>
+            <span style="color: var(--text-muted);">📌 المصدر: {{ report.source }}</span>
+            <span style="color: var(--text-muted); margin-right: auto;">
+                📅 {% if report.published_at %}{{ report.published_at[:10] }}{% else %}{{ report.updated_at[:10] }}{% endif %}
+            </span>
+        </div>
+
+        <!-- Title -->
+        <h1 style="font-size: 2.2rem; font-weight: 800; line-height: 1.35; color: #ffffff; margin-bottom: 1.5rem;">
+            {{ report.title }}
+        </h1>
+
+        <!-- Excerpt / Summary -->
+        {% if report.summary %}
+            <div style="background: rgba(245, 158, 11, 0.08); border-right: 4px solid var(--brand-gold); padding: 1.2rem 1.5rem; border-radius: 0 8px 8px 0; font-size: 1.12rem; color: #cbd5e1; margin-bottom: 2rem; line-height: 1.8;">
+                {{ report.summary }}
+            </div>
+        {% endif %}
+
+        <!-- Feature Cover Image -->
+        {% if report.image_url %}
+            <figure style="margin-bottom: 2rem;">
+                <img src="{{ report.image_url }}" alt="{{ report.title }}" style="width: 100%; max-height: 440px; object-fit: cover; border-radius: 10px; border: 1px solid var(--border-subtle);" />
+                {% if report.image_caption %}
+                    <figcaption style="font-size: 0.8rem; color: var(--text-muted); text-align: center; margin-top: 0.5rem;">
+                        {{ report.image_caption }}
+                    </figcaption>
+                {% endif %}
+            </figure>
+        {% endif %}
+
+        <!-- Rendered HTML Content -->
+        <div class="article-rendered-body" style="font-size: 1.1rem; line-height: 1.9; color: #e2e8f0;">
+            {{ report.content_html | safe }}
+        </div>
+
+        <!-- Tags & Details -->
+        {% if report.tags %}
+            <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border-subtle); display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">الوسوم:</span>
+                {% for tag in report.tags.split(',') %}
+                    {% if tag.strip() %}
+                        <span style="background: var(--surface-subtle); color: #cbd5e1; padding: 0.25rem 0.65rem; border-radius: 6px; font-size: 0.8rem;">
+                            #{{ tag.strip() }}
+                        </span>
+                    {% endif %}
+                {% endfor %}
+            </div>
+        {% endif %}
+    </article>
+
+    <!-- RSS 2.0 Compliance Inspector Card -->
+    <div class="card" style="margin-top: 2rem;">
+        <div class="card-header">
+            <h3 class="card-title">معاينة تمثيل المقال في خلاصة RSS 2.0 XML</h3>
+            <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">معايير RSS 2.0 القياسية</span>
+        </div>
+        <div class="card-body">
+            <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 1rem;">
+                هكذا يظهر هذا العنصر &lt;item&gt; في قارئات الأخلاصات (Feedly, Inoreader, Apple News, etc.):
+            </p>
+            <pre style="background: #060a14; padding: 1.25rem; border-radius: 8px; border: 1px solid var(--border-subtle); color: #38bdf8; font-family: monospace; font-size: 0.85rem; direction: ltr; text-align: left; overflow-x: auto;">&lt;item&gt;
+  &lt;title&gt;&lt;![CDATA[{{ report.title }}]]&gt;&lt;/title&gt;
+  &lt;link&gt;{{ public_base_url }}/articles/{{ report.slug }}.html&lt;/link&gt;
+  &lt;guid isPermaLink="true"&gt;{{ public_base_url }}/articles/{{ report.slug }}.html&lt;/guid&gt;
+  &lt;pubDate&gt;RFC 822 Date Format&lt;/pubDate&gt;
+  &lt;dc:creator&gt;&lt;![CDATA[{{ report.author }}]]&gt;&lt;/dc:creator&gt;
+  &lt;category&gt;&lt;![CDATA[{{ category.name }}]]&gt;&lt;/category&gt;
+  &lt;description&gt;&lt;![CDATA[{{ report.summary or report.title }}]]&gt;&lt;/description&gt;
+  &lt;content:encoded&gt;&lt;![CDATA[...HTML Content...]]&gt;&lt;/content:encoded&gt;
+  {% if report.image_url %}&lt;enclosure url="{{ report.image_url }}" length="0" type="image/jpeg" /&gt;{% endif %}
+&lt;/item&gt;</pre>
+        </div>
+    </div>
+</div>
+{% endblock %}

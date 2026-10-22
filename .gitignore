@@ -1,0 +1,27 @@
+# Virtual Environment
+.venv/
+venv/
+ENV/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# SQLite Databases (can be committed or ignored; keep local data private)
+data/*.db
+data/*.sqlite
+data/*.sqlite3
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Flask session / environment
+.env
+.env.local
+
+# Logs
+*.log
