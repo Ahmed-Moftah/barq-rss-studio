@@ -2,22 +2,22 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
   <channel>
     <title><![CDATA[برق | استوديو التقارير التحريرية]]></title>
-    <link>https://barq-media.github.io/rss-studio</link>
+    <link>https://ahmed-moftah.github.io/barq-rss-studio</link>
     <description><![CDATA[منصة مستقلة لإدارة وصياغة التقارير التحريرية لشبكة برق، وتوليد خلاصات RSS 2.0 المتوافقة قياسياً والنشر السريع على GitHub Pages.]]></description>
     <language>ar</language>
     <copyright><![CDATA[جميع الحقوق محفوظة © شبكة برق الإعلامية 2026]]></copyright>
-    <lastBuildDate>Thu, 22 Oct 2026 01:12:02 +0000</lastBuildDate>
+    <lastBuildDate>Thu, 22 Oct 2026 01:53:07 +0000</lastBuildDate>
     <generator>BARQ Editorial RSS Studio 2.0</generator>
-    <atom:link href="https://barq-media.github.io/rss-studio/feed.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="https://ahmed-moftah.github.io/barq-rss-studio/feed.xml" rel="self" type="application/rss+xml" />
     <image>
-      <url>https://barq-media.github.io/rss-studio/assets/logo.png</url>
+      <url>https://ahmed-moftah.github.io/barq-rss-studio/assets/logo.png</url>
       <title><![CDATA[برق | استوديو التقارير التحريرية]]></title>
-      <link>https://barq-media.github.io/rss-studio</link>
+      <link>https://ahmed-moftah.github.io/barq-rss-studio</link>
     </image>
     <item>
       <title><![CDATA[الذكاء الاصطناعي السيادي: استراتيجيات الشرق الأوسط لبناء نماذج لغوية مستقلة]]></title>
-      <link>https://barq-media.github.io/rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</link>
-      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</guid>
+      <link>https://ahmed-moftah.github.io/barq-rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</link>
+      <guid isPermaLink="true">https://ahmed-moftah.github.io/barq-rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</guid>
       <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
       <dc:creator><![CDATA[مختبر برق للتقنية والإعلام]]></dc:creator>
       <category><![CDATA[تكنولوجيا وابتكار]]></category>
@@ -46,8 +46,8 @@
     </item>
     <item>
       <title><![CDATA[تحولات ممرات التجارة الإقليمية: خريطة سلاسل الإمداد الجديدة]]></title>
-      <link>https://barq-media.github.io/rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</link>
-      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</guid>
+      <link>https://ahmed-moftah.github.io/barq-rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</link>
+      <guid isPermaLink="true">https://ahmed-moftah.github.io/barq-rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</guid>
       <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
       <dc:creator><![CDATA[وحدة التحليلات الاقتصادية - برق]]></dc:creator>
       <category><![CDATA[اقتصاد وأعمال]]></category>
