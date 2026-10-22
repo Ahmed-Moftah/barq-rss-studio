@@ -1,0 +1,45 @@
+{
+  "site_name": "برق | استوديو التقارير التحريرية",
+  "base_url": "https://barq-media.github.io/rss-studio",
+  "generated_at": "2026-10-22T00:48:42.517374+00:00",
+  "master_feed": "https://barq-media.github.io/rss-studio/feed.xml",
+  "category_feeds": [
+    {
+      "id": "politics",
+      "name": "شؤون سياسية",
+      "url": "https://barq-media.github.io/rss-studio/feeds/politics.xml",
+      "count": 0
+    },
+    {
+      "id": "economy",
+      "name": "اقتصاد وأعمال",
+      "url": "https://barq-media.github.io/rss-studio/feeds/economy.xml",
+      "count": 1
+    },
+    {
+      "id": "tech",
+      "name": "تكنولوجيا وابتكار",
+      "url": "https://barq-media.github.io/rss-studio/feeds/tech.xml",
+      "count": 1
+    },
+    {
+      "id": "analysis",
+      "name": "تقديرات موقف",
+      "url": "https://barq-media.github.io/rss-studio/feeds/analysis.xml",
+      "count": 1
+    },
+    {
+      "id": "reports",
+      "name": "تقارير خاصة",
+      "url": "https://barq-media.github.io/rss-studio/feeds/reports.xml",
+      "count": 0
+    },
+    {
+      "id": "investigations",
+      "name": "تحقيقات استقصائية",
+      "url": "https://barq-media.github.io/rss-studio/feeds/investigations.xml",
+      "count": 0
+    }
+  ],
+  "published_count": 3
+}

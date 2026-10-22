@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title><![CDATA[برق | استوديو التقارير التحريرية | تقديرات موقف]]></title>
+    <link>https://barq-media.github.io/rss-studio/#category-analysis</link>
+    <description><![CDATA[أوراق تقدير موقف وتحليلات استراتيجية للأبعاد الأمنية والجيوسياسية - خلاصة RSS لقسم تقديرات موقف]]></description>
+    <language>ar</language>
+    <copyright><![CDATA[جميع الحقوق محفوظة © شبكة برق الإعلامية 2026]]></copyright>
+    <managingEditor><![CDATA[فريق تحرير برق (editorial@barq.local)]]></managingEditor>
+    <lastBuildDate>Thu, 22 Oct 2026 00:48:42 +0000</lastBuildDate>
+    <generator>BARQ Editorial RSS Studio 2.0</generator>
+    <atom:link href="https://barq-media.github.io/rss-studio/feeds/analysis.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>https://barq-media.github.io/rss-studio/assets/logo.png</url>
+      <title><![CDATA[برق | استوديو التقارير التحريرية | تقديرات موقف]]></title>
+      <link>https://barq-media.github.io/rss-studio/#category-analysis</link>
+    </image>
+    <item>
+      <title><![CDATA[تقدير موقف: موازين القوى في البحر الأحمر وانعكاساتها الاستراتيجية]]></title>
+      <link>https://barq-media.github.io/rss-studio/articles/strategic-assessment-red-sea-balance-of-power.html</link>
+      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/strategic-assessment-red-sea-balance-of-power.html</guid>
+      <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
+      <dc:creator><![CDATA[مركز برق للدراسات الاستراتيجية]]></dc:creator>
+      <category><![CDATA[تقديرات موقف]]></category>
+      <description><![CDATA[دراسة متأنية للتحركات البحرية الإقليمية والدولية في مضيق باب المندب وتأثيراتها المتوقعة على الاستقرار الأمني الإقليمي.]]></description>
+      <content:encoded><![CDATA[<h2>خلفية المشهد</h2>
+<p>يشكل البحر الأحمر شرياناً حيوياً يمر عبره أكثر من 12% من إجمالي حركة التجارة البحرية العالمية وما يقرب من ثلث حركة الحاويات العالمية.</p>
+<h3>سيناريوهات التطور الميداني</h3>
+<ul>
+<li><strong>السيناريو الأول</strong>: استمرار نمط الاستنزاف المحدود مع بقاء وتيرة الشحن تحت الحماية البحرية المشتركة.</li>
+<li><strong>السيناريو الثاني</strong>: التوصل إلى تفاهمات تهدئة إقليمية تنعكس مباشرة على حركة الملاحة.</li>
+<li><strong>السيناريو الثالث</strong>: تصعيد مفاجئ يجبر شركات الشحن العالمية على التوسع الدائم في طريق رأس الرجاء الصالح.</li>
+</ul>
+<h3>التوصيات لصناع القرار</h3>
+<p>ضرورة تعزيز قنوات التنسيق البحري المشترك ودعم استراتيجيات خفض التصعيد لمنع تحول الممر إلى ساحة صراع مفتوح.</p>]]></content:encoded>
+      <enclosure url="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" length="0" type="image/jpeg" />
+    </item>
+  </channel>
+</rss>

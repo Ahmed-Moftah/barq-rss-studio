@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:content="http://purl.org/rss/1.0/modules/content/" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title><![CDATA[برق | استوديو التقارير التحريرية]]></title>
+    <link>https://barq-media.github.io/rss-studio</link>
+    <description><![CDATA[منصة مستقلة لإدارة وصياغة التقارير التحريرية لشبكة برق، وتوليد خلاصات RSS 2.0 المتوافقة قياسياً والنشر السريع على GitHub Pages.]]></description>
+    <language>ar</language>
+    <copyright><![CDATA[جميع الحقوق محفوظة © شبكة برق الإعلامية 2026]]></copyright>
+    <managingEditor><![CDATA[فريق تحرير برق (editorial@barq.local)]]></managingEditor>
+    <lastBuildDate>Thu, 22 Oct 2026 00:48:42 +0000</lastBuildDate>
+    <generator>BARQ Editorial RSS Studio 2.0</generator>
+    <atom:link href="https://barq-media.github.io/rss-studio/feed.xml" rel="self" type="application/rss+xml" />
+    <image>
+      <url>https://barq-media.github.io/rss-studio/assets/logo.png</url>
+      <title><![CDATA[برق | استوديو التقارير التحريرية]]></title>
+      <link>https://barq-media.github.io/rss-studio</link>
+    </image>
+    <item>
+      <title><![CDATA[تقدير موقف: موازين القوى في البحر الأحمر وانعكاساتها الاستراتيجية]]></title>
+      <link>https://barq-media.github.io/rss-studio/articles/strategic-assessment-red-sea-balance-of-power.html</link>
+      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/strategic-assessment-red-sea-balance-of-power.html</guid>
+      <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
+      <dc:creator><![CDATA[مركز برق للدراسات الاستراتيجية]]></dc:creator>
+      <category><![CDATA[تقديرات موقف]]></category>
+      <description><![CDATA[دراسة متأنية للتحركات البحرية الإقليمية والدولية في مضيق باب المندب وتأثيراتها المتوقعة على الاستقرار الأمني الإقليمي.]]></description>
+      <content:encoded><![CDATA[<h2>خلفية المشهد</h2>
+<p>يشكل البحر الأحمر شرياناً حيوياً يمر عبره أكثر من 12% من إجمالي حركة التجارة البحرية العالمية وما يقرب من ثلث حركة الحاويات العالمية.</p>
+<h3>سيناريوهات التطور الميداني</h3>
+<ul>
+<li><strong>السيناريو الأول</strong>: استمرار نمط الاستنزاف المحدود مع بقاء وتيرة الشحن تحت الحماية البحرية المشتركة.</li>
+<li><strong>السيناريو الثاني</strong>: التوصل إلى تفاهمات تهدئة إقليمية تنعكس مباشرة على حركة الملاحة.</li>
+<li><strong>السيناريو الثالث</strong>: تصعيد مفاجئ يجبر شركات الشحن العالمية على التوسع الدائم في طريق رأس الرجاء الصالح.</li>
+</ul>
+<h3>التوصيات لصناع القرار</h3>
+<p>ضرورة تعزيز قنوات التنسيق البحري المشترك ودعم استراتيجيات خفض التصعيد لمنع تحول الممر إلى ساحة صراع مفتوح.</p>]]></content:encoded>
+      <enclosure url="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" length="0" type="image/jpeg" />
+    </item>
+    <item>
+      <title><![CDATA[الذكاء الاصطناعي السيادي: استراتيجيات الشرق الأوسط لبناء نماذج لغوية مستقلة]]></title>
+      <link>https://barq-media.github.io/rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</link>
+      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/sovereign-ai-arabic-llm-strategies.html</guid>
+      <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
+      <dc:creator><![CDATA[مختبر برق للتقنية والإعلام]]></dc:creator>
+      <category><![CDATA[تكنولوجيا وابتكار]]></category>
+      <description><![CDATA[كيف تعمل مراكز الأبحاث والمبادرات التكنولوجية في العالم العربي على تدريب نماذج لغوية ضخمة تضمن الخصوصية الثقافية والسيادة الرقمية.]]></description>
+      <content:encoded><![CDATA[<h2>صعود مفهوم السيادة الرقمية</h2>
+<p>مع تسارع سباق الذكاء الاصطناعي التوليدي حول العالم، تبرز مسألة <strong>السيادة التكنولوجية والبيانية</strong> كأولوية قصوى للدول والمؤسسات الإعلامية والبحثية.</p>
+<h3>ركائز بناء النماذج اللغوية العربية</h3>
+<ul>
+<li><strong>بناء مجموعات بيانات تدريبية موثوقة</strong>: تنقية ملايين النصوص باللغة العربية الفصحى بمختلف فروعها المعرفية.</li>
+<li><strong>البنية التحتية للحوسبة السحابية</strong>: الاستثمار في مراكز بيانات وطنية فائقة القدرة.</li>
+<li><strong>الأمان اللغوي والثقافي</strong>: تدريب النماذج على استيعاب السياق الحضاري والخصوصيات التشريعية دون تحيز غربي أو تشويه معجمي.</li>
+</ul>
+<h3>التحديات القائمة</h3>
+<p>تتمثل العقبة الكبرى في وفرة الرقائق الإلكترونية المتخصصة والحاجة إلى كوادر بحثية متقدمة في هندسة النماذج العصبية التوليدية.</p>]]></content:encoded>
+      <enclosure url="https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" length="0" type="image/jpeg" />
+    </item>
+    <item>
+      <title><![CDATA[تحولات ممرات التجارة الإقليمية: خريطة سلاسل الإمداد الجديدة]]></title>
+      <link>https://barq-media.github.io/rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</link>
+      <guid isPermaLink="true">https://barq-media.github.io/rss-studio/articles/regional-trade-corridors-supply-chains-2026.html</guid>
+      <pubDate>Thu, 22 Oct 2026 00:48:42 +0000</pubDate>
+      <dc:creator><![CDATA[وحدة التحليلات الاقتصادية - برق]]></dc:creator>
+      <category><![CDATA[اقتصاد وأعمال]]></category>
+      <description><![CDATA[قراءة تحليلية في إعادة تشكيل موانئ وممرات الشحن الإقليمية وأثر التحولات الجيوسياسية على استقرار خطوط الإمداد العالمية.]]></description>
+      <content:encoded><![CDATA[<h2>خريطة استراتيجية جديدة</h2>
+<p>تشهد المنطقة تحولاً جذرياً في بنيتها اللوجستية، حيث تتسابق الاقتصادات الإقليمية على توسعة الموانئ والمحطات البحرية وتدشين شبكات سكك حديدية عابرة للحدود.</p>
+<h3>دوافع إعادة التموضع</h3>
+<ol>
+<li><strong>تقليل الاعتماد على نقاط الاختناق البحرية التقليدية</strong>: البحث عن مسارات برية وبحرية بديلة وسريعة.</li>
+<li><strong>تسريع وتيرة التجارة البينية</strong>: رفع معدل الربط التجاري والصناعي المباشر.</li>
+<li><strong>التكامل مع الموانئ الذكية</strong>: توظيف إنترنت الأشياء والذكاء الاصطناعي في إدارة الحاويات وتتبع حركة البضائع.</li>
+</ol>
+<blockquote>
+<p>"لم تعد الممرات التجارية مجرد خطوط نقل بضائع، بل أضحت ركائز للسيادة الاقتصادية وبناء التحالفات الجيواقتصادية الجديدة."</p>
+</blockquote>
+<h3>الخلاصة والتوقعات</h3>
+<p>يتوقع الخبراء أن تشهد السنوات الثلاث المقبلة ارتفاعاً بنسبة 28% في حجم التجارة المنقولة عبر الممرات المتعددة الوسائط، مما يعزز المرونة الاقتصادية في مواجهة التقلبات الدولية.</p>]]></content:encoded>
+      <enclosure url="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&amp;fit=crop&amp;w=1200&amp;q=80" length="0" type="image/jpeg" />
+    </item>
+  </channel>
+</rss>
