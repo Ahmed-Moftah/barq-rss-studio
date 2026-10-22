@@ -409,6 +409,9 @@ def render_public_index_html(reports, categories_info, base_url, site_name, site
     <meta name="description" content="{site_desc}">
     <link rel="canonical" href="{base_url}/">
     
+    <!-- Prevent search engine indexation to avoid duplicate content penalty for BARQ -->
+    <meta name="robots" content="noindex, nofollow">
+    
     <!-- RSS Autodiscovery -->
     <link rel="alternate" type="application/rss+xml" title="خلاصة تقارير برق الشاملة" href="{base_url}/feed.xml">
     

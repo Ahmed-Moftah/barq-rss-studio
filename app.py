@@ -109,7 +109,7 @@ def create_app(test_config=None):
             report_id = database.create_report(report_data, db_path=db_path)
             
             if final_status == "published":
-                rss_generator.build_all_feeds(db_path=db_path)
+                rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
                 
             return redirect(url_for("report_preview", report_id=report_id))
             
@@ -158,7 +158,7 @@ def create_app(test_config=None):
             }
             
             database.update_report(report_id, update_data, db_path=db_path)
-            rss_generator.build_all_feeds(db_path=db_path)
+            rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
                 
             return redirect(url_for("report_preview", report_id=report_id))
             
@@ -182,7 +182,7 @@ def create_app(test_config=None):
                 # Unpublishing back to draft
                 new_status = "draft"
                 database.update_report(report_id, {"status": new_status}, db_path=db_path)
-                rss_generator.build_all_feeds(db_path=db_path)
+                rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
                 flash("تم تحويل التقرير إلى مسودة وإلغاء نشره من خلاصات RSS.", "info")
             else:
                 # Require explicit approval confirmation
@@ -190,7 +190,7 @@ def create_app(test_config=None):
                 if confirmed:
                     new_status = "published"
                     database.update_report(report_id, {"status": new_status}, db_path=db_path)
-                    rss_generator.build_all_feeds(db_path=db_path)
+                    rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
                     flash("تم اعتماد التقرير رسمياً ونشره في خلاصات RSS 2.0 القياسية.", "success")
                 else:
                     flash("يلزم تأكيد الاعتماد الصريح قبل نشر التقرير في الخلاصات العامة.", "warning")
@@ -199,13 +199,13 @@ def create_app(test_config=None):
     @app.route("/reports/<int:report_id>/delete", methods=["POST"])
     def report_delete(report_id):
         database.delete_report(report_id, db_path=db_path)
-        rss_generator.build_all_feeds(db_path=db_path)
+        rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
         flash("تم حذف التقرير بنجاح", "success")
         return redirect(url_for("dashboard"))
 
     @app.route("/feeds")
     def feeds_overview():
-        build_info = rss_generator.build_all_feeds(db_path=db_path)
+        build_info = rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
         return render_template("feeds.html", build_info=build_info)
 
     # Directly serve standard RSS feeds from local server
@@ -264,7 +264,7 @@ def create_app(test_config=None):
                     database.set_setting(key, val.strip(), db_path=db_path)
                     
             flash("تم حفظ الإعدادات بنجاح وتحديث المتغيرات.", "success")
-            rss_generator.build_all_feeds(db_path=db_path)
+            rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
             return redirect(url_for("settings_view"))
             
         current_base_url = database.get_setting("public_base_url", Config.PUBLIC_BASE_URL, db_path=db_path).rstrip("/")
