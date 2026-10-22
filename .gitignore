@@ -2,26 +2,49 @@
 .venv/
 venv/
 ENV/
+env/
 
-# Python cache
+# Python cache & build
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .pytest_cache/
+*.egg-info/
+dist-pkg/
+build/
 
-# SQLite Databases (can be committed or ignored; keep local data private)
-data/*.db
-data/*.sqlite
-data/*.sqlite3
+# SQLite Databases & Local Editorial Data (Keep private local database untracked)
+data/
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.db-wal
+*.db-shm
 
-# OS generated files
+# Credentials, tokens, keys and secrets
+*.token
+*.key
+*.pem
+*.cert
+*.secret
+secrets.*
+local_settings.*
+.env
+.env.*
+!.env.example
+
+# Flask runtime instance
+instance/
+
+# OS and Editor generated files
 .DS_Store
 Thumbs.db
-
-# Flask session / environment
-.env
-.env.local
+.idea/
+.vscode/
+*.swp
+*.swo
 
 # Logs
 *.log

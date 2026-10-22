@@ -17,8 +17,8 @@ class RSSTestCase(unittest.TestCase):
     def test_rss2_xml_validity(self):
         channel_info = {
             "title": "برق | استوديو التقارير",
-            "base_url": "https://barq-media.github.io/rss-studio",
-            "link": "https://barq-media.github.io/rss-studio",
+            "base_url": "https://ahmed-moftah.github.io/barq-rss-studio",
+            "link": "https://ahmed-moftah.github.io/barq-rss-studio",
             "description": "خلاصة التقارير التحريرية القياسية",
             "language": "ar"
         }
@@ -50,7 +50,7 @@ class RSSTestCase(unittest.TestCase):
         item = channel.find("item")
         self.assertIsNotNone(item)
         self.assertEqual(item.find("title").text, "تقرير عن الذكاء الاصطناعي العربي")
-        self.assertEqual(item.find("link").text, "https://barq-media.github.io/rss-studio/articles/arabic-ai-report.html")
+        self.assertEqual(item.find("link").text, "https://ahmed-moftah.github.io/barq-rss-studio/articles/arabic-ai-report.html")
         
         # Enclosure test
         enclosure = item.find("enclosure")
@@ -66,7 +66,7 @@ class RSSTestCase(unittest.TestCase):
     def test_draft_exclusion_from_rss(self):
         channel_info = {
             "title": "برق",
-            "base_url": "https://barq-media.github.io/rss-studio"
+            "base_url": "https://ahmed-moftah.github.io/barq-rss-studio"
         }
         items = [
             {"title": "تقرير منشور", "slug": "pub", "status": "published", "content": "محتوى"},

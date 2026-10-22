@@ -760,6 +760,10 @@ def export_static_site(output_dir=None, db_path=None):
     catalog_file = dist_path / "feed-catalog.json"
     catalog_file.write_text(json.dumps(catalog_data, ensure_ascii=False, indent=2), encoding="utf-8")
     
+    # 6. Create .nojekyll to ensure GitHub Pages serves XML & raw assets directly without Jekyll
+    nojekyll_file = dist_path / ".nojekyll"
+    nojekyll_file.touch(exist_ok=True)
+    
     database.log_publish_action(
         action="build_static_site",
         status="success",
@@ -792,11 +796,14 @@ def publish_to_github(commit_message=None, output_dir=None, db_path=None):
     git_branch = database.get_setting("git_branch", Config.GIT_BRANCH, db_path=db_path)
     
     def run_git(args):
+        git_env = os.environ.copy()
+        git_env["GIT_TERMINAL_PROMPT"] = "0"
         return subprocess.run(
             ["git"] + args,
             cwd=repo_dir,
             capture_output=True,
-            text=True
+            text=True,
+            env=git_env
         )
         
     git_check = run_git(["status"])
@@ -816,25 +823,57 @@ def publish_to_github(commit_message=None, output_dir=None, db_path=None):
             "export_result": export_result
         }
         
-    # If git repo exists, stage dist files and commit
+    # If git repo exists, stage dist files and commit to main development branch
     run_git(["add", "dist"])
     commit_res = run_git(["commit", "-m", msg])
     
-    # Try push if remote is configured
+    # Check if remote is configured
     remote_check = run_git(["remote", "get-url", git_remote])
     push_output = ""
     push_success = False
     
     if remote_check.returncode == 0:
-        push_res = run_git(["push", git_remote, f"HEAD:{git_branch}"])
-        push_output = push_res.stdout or push_res.stderr
-        push_success = (push_res.returncode == 0)
-        if push_success:
-            status_label = "success"
-            summary_msg = f"تم توليد الخلاصات محلياً بنجاح ورفعها بنجاح إلى GitHub Pages ({git_remote}/{git_branch})."
+        # Create a root tree containing ONLY the contents of dist/
+        tree_res = run_git(["write-tree", "--prefix=dist/"])
+        if tree_res.returncode == 0:
+            tree_id = tree_res.stdout.strip()
+            
+            # Find parent for gh-pages branch to maintain linear history
+            parent_args = []
+            remote_parent = run_git(["rev-parse", "--verify", f"{git_remote}/{git_branch}"])
+            if remote_parent.returncode == 0:
+                parent_args = ["-p", remote_parent.stdout.strip()]
+            else:
+                local_parent = run_git(["rev-parse", "--verify", git_branch])
+                if local_parent.returncode == 0:
+                    parent_args = ["-p", local_parent.stdout.strip()]
+                    
+            commit_tree_res = run_git(["commit-tree", tree_id] + parent_args + ["-m", msg])
+            if commit_tree_res.returncode == 0:
+                gh_pages_commit = commit_tree_res.stdout.strip()
+                # Update local gh-pages branch
+                run_git(["update-ref", f"refs/heads/{git_branch}", gh_pages_commit])
+                
+                # Push ONLY dist contents to the root of gh-pages branch on GitHub
+                push_res = run_git(["push", git_remote, f"{gh_pages_commit}:refs/heads/{git_branch}"])
+                push_output = push_res.stdout or push_res.stderr
+                push_success = (push_res.returncode == 0)
+                
+                # Also push main branch to keep development code in sync
+                run_git(["push", git_remote, "main"])
+                
+                if push_success:
+                    status_label = "success"
+                    summary_msg = f"تم توليد ونشر محتويات مجلد dist حصرياً إلى جذر فرع {git_branch} على GitHub Pages بنجاح."
+                else:
+                    status_label = "warning"
+                    summary_msg = f"تم التوليد محلياً، لكن تعذر الدفع لفرع {git_branch}: {push_output}"
+            else:
+                status_label = "warning"
+                summary_msg = f"فشل إنشاء نقطة الالتزام لفرع {git_branch}: {commit_tree_res.stderr}"
         else:
             status_label = "warning"
-            summary_msg = f"تم توليد الخلاصات محلياً، لكن تعذر الرفع البعيد إلى {git_remote}/{git_branch}: {push_output}"
+            summary_msg = f"فشل تجهيز شجرة مجلد dist: {tree_res.stderr}"
     else:
         push_output = f"الريموت '{git_remote}' غير مربوط بمستودع خارجي حالياً."
         status_label = "local_only"

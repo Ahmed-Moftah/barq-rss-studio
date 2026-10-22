@@ -84,13 +84,17 @@ python -m unittest discover -s tests -p "test_*.py"
 
 | القسم التحريري | المعرّف (Slug) | رابط الخلاصة على GitHub Pages |
 | :--- | :--- | :--- |
-| **الخلاصة الشاملة** | `feed` | `https://[username].github.io/[repo]/feed.xml` |
-| **شؤون سياسية** | `politics` | `https://[username].github.io/[repo]/feeds/politics.xml` |
-| **اقتصاد وأعمال** | `economy` | `https://[username].github.io/[repo]/feeds/economy.xml` |
-| **تكنولوجيا وابتكار** | `tech` | `https://[username].github.io/[repo]/feeds/tech.xml` |
-| **تقديرات موقف** | `analysis` | `https://[username].github.io/[repo]/feeds/analysis.xml` |
-| **تقارير خاصة** | `reports` | `https://[username].github.io/[repo]/feeds/reports.xml` |
-| **تحقيقات استقصائية**| `investigations` | `https://[username].github.io/[repo]/feeds/investigations.xml`|
+| **الخلاصة الشاملة** | `feed` | `https://ahmed-moftah.github.io/barq-rss-studio/feed.xml` |
+| **شؤون سياسية** | `politics` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/politics.xml` |
+| **اقتصاد وأعمال** | `economy` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/economy.xml` |
+| **صحة وعافية** | `health` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/health.xml` |
+| **ثقافة وفنون** | `arts` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/arts.xml` |
+| **شؤون رياضية** | `sports` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/sports.xml` |
+| **تكنولوجيا وابتكار** | `tech` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/tech.xml` |
+| **أخبار عامة** | `news` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/news.xml` |
+| **تقديرات موقف** | `analysis` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/analysis.xml` |
+| **تقارير خاصة** | `reports` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/reports.xml` |
+| **تحقيقات استقصائية**| `investigations` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/investigations.xml`|
 
 ---
 

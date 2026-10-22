@@ -26,7 +26,7 @@ class Config:
     
     # Default Public Base URL for GitHub Pages / Feed links
     # Users can update this in the application settings interface or via environment variable
-    PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "https://barq-media.github.io/rss-studio").rstrip("/")
+    PUBLIC_BASE_URL = os.environ.get("PUBLIC_BASE_URL", "https://ahmed-moftah.github.io/barq-rss-studio").rstrip("/")
     
     # Git & GitHub Pages automated deployment configuration
     GIT_REMOTE = os.environ.get("GIT_REMOTE", "origin")
