@@ -85,6 +85,7 @@ python -m unittest discover -s tests -p "test_*.py"
 | القسم التحريري | المعرّف (Slug) | رابط الخلاصة على GitHub Pages |
 | :--- | :--- | :--- |
 | **الخلاصة الشاملة** | `feed` | `https://ahmed-moftah.github.io/barq-rss-studio/feed.xml` |
+| **عاجل** | `breaking` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/breaking.xml` |
 | **شؤون سياسية** | `politics` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/politics.xml` |
 | **اقتصاد وأعمال** | `economy` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/economy.xml` |
 | **صحة وعافية** | `health` | `https://ahmed-moftah.github.io/barq-rss-studio/feeds/health.xml` |

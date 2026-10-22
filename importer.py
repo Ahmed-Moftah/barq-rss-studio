@@ -16,6 +16,8 @@ def map_category_string(cat_str):
             return cat["id"]
             
     # Fuzzy keyword mapping
+    if any(k in text for k in ["عاجل", "خبر عاجل", "تطورات عاجلة", "طارئ", "breaking"]):
+        return "breaking"
     if any(k in text for k in ["سياس", "دبلوماس", "علاقات دولية", "politics"]):
         return "politics"
     if any(k in text for k in ["اقتصاد", "مال", "أعمال", "أسواق", "استثمار", "تجارة", "economy"]):
@@ -28,7 +30,7 @@ def map_category_string(cat_str):
         return "sports"
     if any(k in text for k in ["تكنول", "تقني", "ذكاء", "برمج", "سايبر", "رقمي", "tech"]):
         return "tech"
-    if any(k in text for k in ["أخبار عامة", "موجز", "عاجل", "أحداث", "news", "general"]):
+    if any(k in text for k in ["أخبار عامة", "موجز", "أحداث", "news", "general"]):
         return "news"
     if any(k in text for k in ["تحليل", "تقدير موقف", "استراتيج", "رأي", "analysis"]):
         return "analysis"

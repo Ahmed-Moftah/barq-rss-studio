@@ -41,6 +41,9 @@ class ImporterTestCase(unittest.TestCase):
         self.assertIn("تحليل مسارات", parsed["summary"])
 
     def test_category_fuzzy_mapping(self):
+        self.assertEqual(importer.map_category_string("عاجل"), "breaking")
+        self.assertEqual(importer.map_category_string("خبر عاجل الآن"), "breaking")
+        self.assertEqual(importer.map_category_string("breaking"), "breaking")
         self.assertEqual(importer.map_category_string("شؤون سياسية ودولية"), "politics")
         self.assertEqual(importer.map_category_string("اقتصاد وأسواق المال"), "economy")
         self.assertEqual(importer.map_category_string("الذكاء الاصطناعي والتقنية"), "tech")

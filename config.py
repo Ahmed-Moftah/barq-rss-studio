@@ -36,6 +36,14 @@ class Config:
     # Standard Editorial Categories (Configurable)
     CATEGORIES = [
         {
+            "id": "breaking",
+            "name": "عاجل",
+            "slug": "breaking",
+            "description": "تغطيات إخبارية عاجلة وتحديثات لحظية للأحداث الطارئة",
+            "badge_color": "#dc2626",  # red
+            "badge_bg": "#fee2e2"
+        },
+        {
             "id": "politics",
             "name": "شؤون سياسية",
             "slug": "politics",
@@ -122,4 +130,7 @@ class Config:
         for cat in cls.CATEGORIES:
             if cat["id"] == cat_id or cat["slug"] == cat_id:
                 return cat
-        return cls.CATEGORIES[8]  # Default to 'reports'
+        for cat in cls.CATEGORIES:
+            if cat["id"] == "reports":
+                return cat
+        return cls.CATEGORIES[0]

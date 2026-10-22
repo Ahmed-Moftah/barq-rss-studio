@@ -121,7 +121,7 @@ class PublisherTestCase(unittest.TestCase):
         art_draft = os.path.join(self.dist_dir, "articles", "secret-draft-report.html")
         self.assertFalse(os.path.exists(art_draft))
 
-        # 4. Check all 10 category feeds are generated
+        # 4. Check all category feeds are generated
         for cat in Config.CATEGORIES:
             cat_feed = os.path.join(self.dist_dir, "feeds", f"{cat['id']}.xml")
             self.assertTrue(os.path.exists(cat_feed), f"Missing feed for category {cat['id']}")
