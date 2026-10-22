@@ -191,8 +191,15 @@ function initPublishAction() {
                 });
                 const res = await resp.json();
 
-                if (res.success) {
-                    alert(`✓ اكتملت عملية التوليد والتصدير بنجاح!\n\n${res.message || 'تم تحديث ملفات خلاصات RSS وموقع GitHub Pages.'}`);
+                if (res.remote_deployment_success) {
+                    alert(`✓ اكتملت عملية التوليد والنشر بنجاح!\n\n${res.message || 'تم تحديث ملفات خلاصات RSS وموقع GitHub Pages.'}`);
+                    window.location.reload();
+                } else if (res.local_generation_success) {
+                    let diagMsg = '';
+                    if (res.public_url_diagnostic && res.public_url_diagnostic.status_code) {
+                        diagMsg = `\n- حالة الرابط العام: HTTP ${res.public_url_diagnostic.status_code}`;
+                    }
+                    alert(`✓ نجح التوليد والتصدير المحلي في مجلد dist بنجاح!\n\nملاحظة النشر البعيد:\n${res.message}${diagMsg}\n\n(الخلاصات متوفرة محلياً 100%. لجعلها متاحة لشبكة برق أونلاين، يجب ربط مستودع GitHub البعيد وتفعيل خدمة GitHub Pages).`);
                     window.location.reload();
                 } else {
                     alert(`تنبيه: ${res.message || 'حدث خطأ أثناء النشر.'}`);

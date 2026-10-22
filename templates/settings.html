@@ -4,6 +4,45 @@
 {% block page_title %}إعدادات الاستوديو والنشر على GitHub Pages{% endblock %}
 
 {% block content %}
+<!-- Live Public Reachability Diagnostic Box -->
+<div class="card" style="border: 1px solid var(--border-subtle); margin-bottom: 2rem;">
+    <div class="card-header">
+        <h3 class="card-title">حالة النشر والوصول العام للخلاصات (GitHub Pages Diagnostic)</h3>
+        <span class="badge" style="background: rgba(59, 130, 246, 0.15); color: #60a5fa;">تشخيص النشر</span>
+    </div>
+    <div class="card-body">
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.25rem;">
+            <div style="background: var(--surface-subtle); padding: 1.2rem; border-radius: 10px; border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">1. التوليد والتصدير المحلي (dist/):</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    <span class="badge badge-published" style="font-size: 0.9rem;">ناجح محلياً (PASS)</span>
+                    <span style="font-size: 0.85rem; color: #cbd5e1;">ملفات RSS 2.0 والموقع جاهزة</span>
+                </div>
+            </div>
+
+            <div style="background: var(--surface-subtle); padding: 1.2rem; border-radius: 10px; border: 1px solid var(--border-subtle);">
+                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 0.4rem;">2. الوصول العام عبر الإنترنت (Public URL):</div>
+                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                    {% if public_url_status and public_url_status.accessible %}
+                        <span class="badge badge-published" style="font-size: 0.9rem;">متاح عبر الإنترنت (HTTP 200)</span>
+                    {% elif public_url_status and public_url_status.status_code %}
+                        <span class="badge" style="background: rgba(244, 63, 94, 0.15); color: #fb7185; font-size: 0.9rem;">غير متاح عن بعد (HTTP {{ public_url_status.status_code }})</span>
+                    {% else %}
+                        <span class="badge" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b; font-size: 0.9rem;">بانتظار ربط المستودع البعيد</span>
+                    {% endif %}
+                </div>
+                <div style="font-size: 0.8rem; color: var(--text-dim); margin-top: 0.5rem; word-break: break-all; direction: ltr; text-align: left;">
+                    {{ public_url_status.url }}
+                </div>
+            </div>
+        </div>
+
+        <div style="margin-top: 1.25rem; font-size: 0.88rem; color: #cbd5e1; background: rgba(15, 23, 42, 0.6); padding: 1rem; border-radius: 8px;">
+            <strong>توضيح مهم:</strong> التوليد المحلي ينجح دائماً في بناء خلاصات XML القياسية محلياً. ولكي تصبح هذه الخلاصات متاحة لشبكة برق أو قارئات الأخبار عبر الرابط العام، يجب ربط مستودع GitHub الحقيقي عبر <code>git remote add origin &lt;رابط_المستودع&gt;</code> وتفعيل خدمة <strong>GitHub Pages</strong> على فرع <code>{{ settings.git_branch }}</code>.
+        </div>
+    </div>
+</div>
+
 <div class="card">
     <div class="card-header">
         <h3 class="card-title">إعدادات الهوية التحريرية وقنوات النشر</h3>

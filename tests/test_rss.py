@@ -58,6 +58,41 @@ class RSSTestCase(unittest.TestCase):
         self.assertEqual(enclosure.attrib.get("url"), "https://example.com/image.jpg")
         self.assertEqual(enclosure.attrib.get("type"), "image/jpeg")
 
+        # Full content test in both description and content:encoded
+        desc_text = item.find("description").text
+        self.assertIn("نص التقرير", desc_text)
+        self.assertIn("التحليلي", desc_text)
+
+    def test_draft_exclusion_from_rss(self):
+        channel_info = {
+            "title": "برق",
+            "base_url": "https://barq-media.github.io/rss-studio"
+        }
+        items = [
+            {"title": "تقرير منشور", "slug": "pub", "status": "published", "content": "محتوى"},
+            {"title": "مسودة سرية", "slug": "draft", "status": "draft", "content": "محتوى مسودة"}
+        ]
+        xml_output = rss_generator.generate_feed_xml(channel_info, items)
+        self.assertIn("تقرير منشور", xml_output)
+        self.assertNotIn("مسودة سرية", xml_output)
+
+    def test_managing_editor_placeholder_omission(self):
+        # 1. Placeholder .local email should be cleanly omitted from XML
+        channel_info = {
+            "title": "برق",
+            "managing_editor": "فريق التحرير (editor@barq.local)"
+        }
+        xml_out = rss_generator.generate_feed_xml(channel_info, [])
+        self.assertNotIn("<managingEditor>", xml_out)
+
+        # 2. Valid email should be included
+        channel_info_valid = {
+            "title": "برق",
+            "managing_editor": "editor@barq-news.com"
+        }
+        xml_out_valid = rss_generator.generate_feed_xml(channel_info_valid, [])
+        self.assertIn("<managingEditor><![CDATA[editor@barq-news.com]]></managingEditor>", xml_out_valid)
+
     def test_cdata_wrapping_special_characters(self):
         text = 'عنوان يحتوي على "علامات تنصيص" و <رموز> و ]]> تسلسل'
         wrapped = rss_generator.wrap_cdata(text)

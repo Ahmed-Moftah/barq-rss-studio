@@ -33,11 +33,19 @@
             <h3 class="card-title">البيانات الأساسية للتقرير</h3>
             <div style="display: flex; align-items: center; gap: 1rem;">
                 <label style="font-size: 0.9rem; font-weight: 600; color: #f8fafc;">حالة النشر:</label>
-                <select name="status" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.88rem;">
-                    <option value="draft" {% if report.status == 'draft' %}selected{% endif %}>مسودة (غير مدرج في الخلاصات)</option>
-                    <option value="published" {% if report.status == 'published' or is_new %}selected{% endif %}>منشور (يُدرج فوراً في خلاصات RSS 2.0)</option>
+                <select name="status" id="field-status-select" class="form-select" style="width: auto; padding: 0.4rem 0.8rem; font-size: 0.88rem;" onchange="toggleApprovalBox(this.value)">
+                    <option value="draft" {% if report.status != 'published' %}selected{% endif %}>مسودة (الافتراضي - غير مدرج في الخلاصات)</option>
+                    <option value="published" {% if report.status == 'published' %}selected{% endif %}>منشور (يتطلب اعتماداً صريحاً للنشر في RSS)</option>
                 </select>
             </div>
+        </div>
+
+        <!-- Explicit Editorial Approval Checkbox (Safety Guarantee) -->
+        <div id="publish-approval-container" style="display: {% if report.status == 'published' %}block{% else %}none{% endif %}; background: rgba(245, 158, 11, 0.08); border-bottom: 1px solid rgba(245, 158, 11, 0.3); padding: 0.9rem 1.5rem;">
+            <label style="display: flex; align-items: center; gap: 0.6rem; cursor: pointer; color: #f59e0b; font-weight: 600; font-size: 0.9rem;">
+                <input type="checkbox" name="explicit_approval" value="1" id="field-explicit-approval" {% if report.status == 'published' and not is_new %}checked{% endif %}>
+                <span>أؤكد بصفتي محرراً مراجعة واعتماد هذا التقرير للنشر العام في خلاصات RSS 2.0.</span>
+            </label>
         </div>
 
         <div class="card-body">
@@ -134,7 +142,7 @@
         <div class="card-header" style="background: rgba(15, 23, 42, 0.4);">
             <div style="display: flex; gap: 0.75rem;">
                 <button type="submit" class="btn btn-primary" style="padding: 0.75rem 2rem; font-size: 1rem;">
-                    <span>{% if is_new %}حفظ ونشر التقرير{% else %}حفظ التعديلات{% endif %}</span> 💾
+                    <span>حفظ بيانات التقرير</span> 💾
                 </button>
                 <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">إلغاء والعودة</a>
             </div>
@@ -143,6 +151,14 @@
 </form>
 
 <script>
+function toggleApprovalBox(val) {
+    const box = document.getElementById('publish-approval-container');
+    if (box) {
+        box.style.display = (val === 'published') ? 'block' : 'none';
+        const checkbox = document.getElementById('field-explicit-approval');
+        if (checkbox && val !== 'published') checkbox.checked = false;
+    }
+}
 function insertMarkdown(prefix, suffix) {
     const textarea = document.getElementById('field-content');
     if (!textarea) return;

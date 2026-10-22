@@ -12,13 +12,14 @@
             <span>تعديل التقرير</span> ✏️
         </a>
         <form action="{{ url_for('report_toggle_status', report_id=report.id) }}" method="POST" style="display: inline;">
+            <input type="hidden" name="confirmed" value="1">
             {% if report.status == 'published' %}
-                <button type="submit" class="btn btn-secondary btn-sm" style="color: #fb7185;">
+                <button type="submit" class="btn btn-secondary btn-sm" style="color: #fb7185;" onclick="return confirm('هل تريد بالتأكيد إلغاء نشر هذا التقرير وتحويله إلى مسودة؟');">
                     تحويل إلى مسودة (إلغاء النشر)
                 </button>
             {% else %}
-                <button type="submit" class="btn btn-primary btn-sm">
-                    نشر في خلاصات RSS الآن 📡
+                <button type="submit" class="btn btn-primary btn-sm" onclick="return confirm('تأكيد الاعتماد التحريري: هل تؤكد مراجعة هذا التقرير واعتماده للنشر المباشر في خلاصات RSS 2.0؟');">
+                    اعتماد ونشر في خلاصات RSS 📡
                 </button>
             {% endif %}
         </form>

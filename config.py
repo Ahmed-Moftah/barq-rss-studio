@@ -33,7 +33,7 @@ class Config:
     GIT_BRANCH = os.environ.get("GIT_BRANCH", "gh-pages")
     GIT_AUTO_COMMIT = os.environ.get("GIT_AUTO_COMMIT", "True").lower() in ("true", "1", "yes")
     
-    # Standard Editorial Categories
+    # Standard Editorial Categories (Configurable)
     CATEGORIES = [
         {
             "id": "politics",
@@ -52,12 +52,44 @@ class Config:
             "badge_bg": "#d1fae5"
         },
         {
+            "id": "health",
+            "name": "صحة وعافية",
+            "slug": "health",
+            "description": "تغطيات وأبحاث الطب والصحة العامة والتطورات العلاجية",
+            "badge_color": "#0891b2",  # cyan
+            "badge_bg": "#cffafe"
+        },
+        {
+            "id": "arts",
+            "name": "ثقافة وفنون",
+            "slug": "arts",
+            "description": "تغطيات فكرية وأدبية وفنية ونقد سينمائي وإبداعي",
+            "badge_color": "#d97706",  # amber
+            "badge_bg": "#fef3c7"
+        },
+        {
+            "id": "sports",
+            "name": "شؤون رياضية",
+            "slug": "sports",
+            "description": "تحليلات الأداء الرياضي والبطولات الإقليمية والعالمية",
+            "badge_color": "#ea580c",  # orange
+            "badge_bg": "#ffedd5"
+        },
+        {
             "id": "tech",
             "name": "تكنولوجيا وابتكار",
             "slug": "tech",
             "description": "مستجدات الذكاء الاصطناعي، الأمن السيبراني والاقتصاد الرقمي",
             "badge_color": "#6d28d9",  # purple
             "badge_bg": "#ede9fe"
+        },
+        {
+            "id": "news",
+            "name": "أخبار عامة",
+            "slug": "news",
+            "description": "متابعات إخبارية شاملة وموجز يومي لأبرز الأحداث",
+            "badge_color": "#475569",  # slate
+            "badge_bg": "#f1f5f9"
         },
         {
             "id": "analysis",
@@ -90,4 +122,4 @@ class Config:
         for cat in cls.CATEGORIES:
             if cat["id"] == cat_id or cat["slug"] == cat_id:
                 return cat
-        return cls.CATEGORIES[4]  # Default to 'reports'
+        return cls.CATEGORIES[8]  # Default to 'reports'

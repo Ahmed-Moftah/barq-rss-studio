@@ -49,16 +49,38 @@ def detect_mime_type(url):
         return "image/svg+xml"
     return "image/jpeg"
 
+def validate_editor_email(val):
+    """
+    Validate managingEditor according to RSS 2.0 specifications.
+    Returns valid email string or None if placeholder/invalid, omitting it cleanly.
+    """
+    if not val:
+        return None
+    val_str = str(val).strip()
+    if any(p in val_str.lower() for p in [".local", "example.com", "test.com", "placeholder"]):
+        return None
+    if "@" not in val_str or "." not in val_str.split("@")[-1]:
+        return None
+    return val_str
+
 def generate_feed_xml(channel_info, items, self_url=None):
     """
     Generate standard-compliant RSS 2.0 XML string.
+    Ensures:
+    - Valid RSS 2.0 XML with Atom and content namespaces.
+    - Full report content in both <description> and <content:encoded>.
+    - External image enclosures with MIME types.
+    - Stable unique GUIDs and RFC 822 pubDate.
+    - Strict omission of drafts.
+    - Never linking to external publishers as item permalink.
     """
     base_url = channel_info.get("base_url", Config.PUBLIC_BASE_URL).rstrip("/")
     site_title = channel_info.get("title", Config.SITE_NAME)
     site_link = channel_info.get("link", base_url)
     description = channel_info.get("description", Config.SITE_DESCRIPTION)
     language = channel_info.get("language", "ar")
-    managing_editor = channel_info.get("managing_editor", Config.SITE_MANAGING_EDITOR)
+    raw_editor = channel_info.get("managing_editor", Config.SITE_MANAGING_EDITOR)
+    valid_editor = validate_editor_email(raw_editor)
     copyright_text = channel_info.get("copyright", Config.SITE_COPYRIGHT)
     last_build_date = format_rfc822(channel_info.get("last_build_date"))
     
@@ -72,8 +94,14 @@ def generate_feed_xml(channel_info, items, self_url=None):
         f'    <link>{xml_escape(site_link)}</link>',
         f'    <description>{wrap_cdata(description)}</description>',
         f'    <language>{language}</language>',
-        f'    <copyright>{wrap_cdata(copyright_text)}</copyright>',
-        f'    <managingEditor>{wrap_cdata(managing_editor)}</managingEditor>',
+        f'    <copyright>{wrap_cdata(copyright_text)}</copyright>'
+    ]
+
+    # Only include managingEditor if a valid, non-placeholder email is configured
+    if valid_editor:
+        xml_lines.append(f'    <managingEditor>{wrap_cdata(valid_editor)}</managingEditor>')
+
+    xml_lines.extend([
         f'    <lastBuildDate>{last_build_date}</lastBuildDate>',
         '    <generator>BARQ Editorial RSS Studio 2.0</generator>',
         f'    <atom:link href="{xml_escape(feed_self_link)}" rel="self" type="application/rss+xml" />',
@@ -82,10 +110,13 @@ def generate_feed_xml(channel_info, items, self_url=None):
         f'      <title>{wrap_cdata(site_title)}</title>',
         f'      <link>{xml_escape(site_link)}</link>',
         '    </image>'
-    ]
+    ])
     
-    for item in items:
-        # Determine article link
+    # Filter strictly to published items - drafts MUST NEVER be exposed in public RSS
+    safe_items = [item for item in items if item.get("status") == "published" or not item.get("status")]
+    
+    for item in safe_items:
+        # Determine internal article permalink (never external news publisher)
         slug = item.get("slug", "")
         article_url = f"{base_url}/articles/{slug}.html"
         item_title = item.get("title", "بدون عنوان")
@@ -107,14 +138,19 @@ def generate_feed_xml(channel_info, items, self_url=None):
         xml_lines.append(f'      <dc:creator>{wrap_cdata(author)}</dc:creator>')
         xml_lines.append(f'      <category>{wrap_cdata(cat_name)}</category>')
         
-        if summary:
-            xml_lines.append(f'      <description>{wrap_cdata(summary)}</description>')
+        # Include full report content in both <description> and <content:encoded>
+        # for standard-compliant RSS 2.0 readers
+        if summary and summary not in content_html:
+            full_description = f"<p><strong>{summary}</strong></p>\n{content_html}" if content_html else f"<p>{summary}</p>"
         else:
-            xml_lines.append(f'      <description>{wrap_cdata(item_title)}</description>')
+            full_description = content_html or f"<p>{summary or item_title}</p>"
             
-        xml_lines.append(f'      <content:encoded>{wrap_cdata(content_html)}</content:encoded>')
+        full_encoded = content_html or full_description
         
-        # Enclosure for feature image
+        xml_lines.append(f'      <description>{wrap_cdata(full_description)}</description>')
+        xml_lines.append(f'      <content:encoded>{wrap_cdata(full_encoded)}</content:encoded>')
+        
+        # Enclosure for external feature image
         img_url = item.get("image_url")
         if img_url:
             mime = detect_mime_type(img_url)
@@ -124,6 +160,8 @@ def generate_feed_xml(channel_info, items, self_url=None):
         
     xml_lines.append('  </channel>')
     xml_lines.append('</rss>')
+    
+    return "\n".join(xml_lines)
     
     return "\n".join(xml_lines)
 

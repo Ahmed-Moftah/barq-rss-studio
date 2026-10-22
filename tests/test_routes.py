@@ -33,17 +33,42 @@ class RoutesTestCase(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
 
     def test_create_and_preview_report(self):
-        response = self.client.post("/reports/new", data={
-            "title": "تقرير اختبار المسارات",
+        # 1. Without explicit approval, status defaults safely to draft
+        response_draft = self.client.post("/reports/new", data={
+            "title": "تقرير مسودة تجريبية",
+            "slug": "test-draft-report",
+            "category": "politics",
+            "summary": "موجز تجريبي",
+            "content": "محتوى التقرير التحريري",
+            "status": "published"  # Without explicit_approval=1
+        }, follow_redirects=True)
+        self.assertEqual(response_draft.status_code, 200)
+        draft_rep = database.get_report_by_slug("test-draft-report", db_path=self.db_path)
+        self.assertEqual(draft_rep["status"], "draft", "Report should default to draft when explicit approval is missing!")
+
+        # 2. With explicit approval, status becomes published
+        response_pub = self.client.post("/reports/new", data={
+            "title": "تقرير اختبار المسارات المعتمد",
             "slug": "test-route-report",
             "category": "politics",
             "summary": "موجز تجريبي",
             "content": "محتوى التقرير التحريري",
             "author": "محرر تجريبي",
-            "status": "published"
+            "status": "published",
+            "explicit_approval": "1"
+        }, follow_redirects=True)
+        self.assertEqual(response_pub.status_code, 200)
+        self.assertIn("تقرير اختبار المسارات المعتمد".encode("utf-8"), response_pub.data)
+        pub_rep = database.get_report_by_slug("test-route-report", db_path=self.db_path)
+        self.assertEqual(pub_rep["status"], "published")
+
+    def test_settings_url_validation(self):
+        # Invalid base URL should fail validation
+        response = self.client.post("/settings", data={
+            "public_base_url": "invalid-url-without-scheme"
         }, follow_redirects=True)
         self.assertEqual(response.status_code, 200)
-        self.assertIn("تقرير اختبار المسارات".encode("utf-8"), response.data)
+        self.assertIn("خطأ في التحقق".encode("utf-8"), response.data)
 
     def test_feed_xml_endpoint(self):
         # Insert a published report

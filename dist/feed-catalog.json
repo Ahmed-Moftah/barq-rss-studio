@@ -1,7 +1,7 @@
 {
   "site_name": "برق | استوديو التقارير التحريرية",
   "base_url": "https://barq-media.github.io/rss-studio",
-  "generated_at": "2026-10-22T00:48:42.517374+00:00",
+  "generated_at": "2026-10-22T01:10:59.986867+00:00",
   "master_feed": "https://barq-media.github.io/rss-studio/feed.xml",
   "category_feeds": [
     {
@@ -17,16 +17,40 @@
       "count": 1
     },
     {
+      "id": "health",
+      "name": "صحة وعافية",
+      "url": "https://barq-media.github.io/rss-studio/feeds/health.xml",
+      "count": 0
+    },
+    {
+      "id": "arts",
+      "name": "ثقافة وفنون",
+      "url": "https://barq-media.github.io/rss-studio/feeds/arts.xml",
+      "count": 0
+    },
+    {
+      "id": "sports",
+      "name": "شؤون رياضية",
+      "url": "https://barq-media.github.io/rss-studio/feeds/sports.xml",
+      "count": 0
+    },
+    {
       "id": "tech",
       "name": "تكنولوجيا وابتكار",
       "url": "https://barq-media.github.io/rss-studio/feeds/tech.xml",
       "count": 1
     },
     {
+      "id": "news",
+      "name": "أخبار عامة",
+      "url": "https://barq-media.github.io/rss-studio/feeds/news.xml",
+      "count": 0
+    },
+    {
       "id": "analysis",
       "name": "تقديرات موقف",
       "url": "https://barq-media.github.io/rss-studio/feeds/analysis.xml",
-      "count": 1
+      "count": 0
     },
     {
       "id": "reports",
@@ -41,5 +65,5 @@
       "count": 0
     }
   ],
-  "published_count": 3
+  "published_count": 2
 }

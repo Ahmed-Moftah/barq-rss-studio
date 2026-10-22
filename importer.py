@@ -20,8 +20,16 @@ def map_category_string(cat_str):
         return "politics"
     if any(k in text for k in ["اقتصاد", "مال", "أعمال", "أسواق", "استثمار", "تجارة", "economy"]):
         return "economy"
+    if any(k in text for k in ["صح", "طب", "علاج", "دواء", "مستشفى", "أوبئة", "health", "medical"]):
+        return "health"
+    if any(k in text for k in ["فن", "ثقاف", "أدب", "سينما", "موسيقى", "مسرح", "فنون", "arts", "culture"]):
+        return "arts"
+    if any(k in text for k in ["رياض", "كرة", "دوري", "بطول", "مبارا", "sports"]):
+        return "sports"
     if any(k in text for k in ["تكنول", "تقني", "ذكاء", "برمج", "سايبر", "رقمي", "tech"]):
         return "tech"
+    if any(k in text for k in ["أخبار عامة", "موجز", "عاجل", "أحداث", "news", "general"]):
+        return "news"
     if any(k in text for k in ["تحليل", "تقدير موقف", "استراتيج", "رأي", "analysis"]):
         return "analysis"
     if any(k in text for k in ["تحقيق", "استقصا", "وثائق", "investigation"]):

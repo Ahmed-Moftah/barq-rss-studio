@@ -1,12 +1,53 @@
 import os
 import json
 import subprocess
+import urllib.request
+import urllib.error
 from datetime import datetime, timezone
 from pathlib import Path
 
 from config import Config
 import database
 import rss_generator
+
+def check_public_url_reachability(url=None, timeout=3):
+    """
+    Check if the public GitHub Pages XML feed URL is actually accessible online.
+    Returns dictionary with status code and accessibility flag.
+    """
+    target = url or f"{Config.PUBLIC_BASE_URL}/feed.xml"
+    req = urllib.request.Request(
+        target,
+        headers={"User-Agent": "BARQ-RSS-Studio-Validator/2.0"}
+    )
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:
+            code = resp.getcode()
+            return {
+                "accessible": (code == 200),
+                "status_code": code,
+                "url": target,
+                "error": None
+            }
+    except urllib.error.HTTPError as e:
+        code = e.code
+        try:
+            e.close()
+        except Exception:
+            pass
+        return {
+            "accessible": False,
+            "status_code": code,
+            "url": target,
+            "error": f"HTTP {code}: {e.reason}"
+        }
+    except Exception as e:
+        return {
+            "accessible": False,
+            "status_code": None,
+            "url": target,
+            "error": str(e)
+        }
 
 def render_static_article_html(report, base_url, site_name):
     """
@@ -55,6 +96,9 @@ def render_static_article_html(report, base_url, site_name):
     <meta property="og:type" content="article">
     <meta property="og:url" content="{article_url}">
     {f'<meta property="og:image" content="{image_url}">' if image_url else ""}
+    
+    <!-- Prevent SEO duplication with primary RSS consumer -->
+    <meta name="robots" content="noindex, nofollow">
     
     <!-- RSS Autodiscovery -->
     <link rel="alternate" type="application/rss+xml" title="خلاصة تقارير برق RSS 2.0" href="{base_url}/feed.xml">
@@ -785,12 +829,17 @@ def publish_to_github(commit_message=None, output_dir=None, db_path=None):
         push_res = run_git(["push", git_remote, f"HEAD:{git_branch}"])
         push_output = push_res.stdout or push_res.stderr
         push_success = (push_res.returncode == 0)
+        if push_success:
+            status_label = "success"
+            summary_msg = f"تم توليد الخلاصات محلياً بنجاح ورفعها بنجاح إلى GitHub Pages ({git_remote}/{git_branch})."
+        else:
+            status_label = "warning"
+            summary_msg = f"تم توليد الخلاصات محلياً، لكن تعذر الرفع البعيد إلى {git_remote}/{git_branch}: {push_output}"
     else:
         push_output = f"الريموت '{git_remote}' غير مربوط بمستودع خارجي حالياً."
+        status_label = "local_only"
+        summary_msg = f"تم توليد الخلاصات محلياً بنجاح في مجلد dist. (الرفع البعيد معلق: ريموت '{git_remote}' غير مربوط بمستودع GitHub بعد)."
         
-    status_label = "success" if (commit_res.returncode == 0 or "nothing to commit" in (commit_res.stdout + commit_res.stderr)) else "warning"
-    
-    summary_msg = f"تم بناء وتجهيز الخلاصات ونشر التحديثات (الفرع: {git_branch})"
     database.log_publish_action(
         action="git_publish",
         status=status_label,
@@ -799,11 +848,20 @@ def publish_to_github(commit_message=None, output_dir=None, db_path=None):
         db_path=db_path
     )
     
+    # Check public URL reachability for real diagnostic feedback
+    public_base = database.get_setting("public_base_url", Config.PUBLIC_BASE_URL, db_path=db_path)
+    public_reachability = check_public_url_reachability(f"{public_base}/feed.xml")
+    
     return {
-        "success": True,
+        "success": True,  # Process ran without crash
+        "local_generation_success": True,
+        "remote_deployment_success": push_success,
+        "status_label": status_label,
+        "message": summary_msg,
         "git_executed": True,
         "pushed": push_success,
         "commit_message": msg,
         "git_output": f"{commit_res.stdout}\n{push_output}".strip(),
-        "export_result": export_result
+        "export_result": export_result,
+        "public_url_diagnostic": public_reachability
     }

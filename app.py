@@ -76,6 +76,22 @@ def create_app(test_config=None):
                 flash("يرجى إدخال عنوان التقرير", "danger")
                 return render_template("editor.html", report=request.form, is_new=True)
                 
+            requested_status = request.form.get("status", "draft")
+            explicit_approval = request.form.get("explicit_approval") == "1"
+            
+            # Editorial Safety: New reports default to Draft.
+            # Require explicit approval before publishing to RSS.
+            if requested_status == "published":
+                if not explicit_approval:
+                    final_status = "draft"
+                    flash("تنبيه أمان تحريري: تم حفظ التقرير كمسودة. لن يتم نشره في خلاصات RSS حتى يتم تفعيل الاعتماد الصريح.", "warning")
+                else:
+                    final_status = "published"
+                    flash("تم اعتماد التقرير ونشره بنجاح في خلاصات RSS 2.0.", "success")
+            else:
+                final_status = "draft"
+                flash("تم حفظ التقرير كمسودة بنجاح.", "success")
+                
             report_data = {
                 "title": title,
                 "slug": request.form.get("slug", "").strip(),
@@ -87,19 +103,17 @@ def create_app(test_config=None):
                 "tags": request.form.get("tags", "").strip(),
                 "image_url": request.form.get("image_url", "").strip(),
                 "image_caption": request.form.get("image_caption", "").strip(),
-                "status": request.form.get("status", "draft")
+                "status": final_status
             }
             
             report_id = database.create_report(report_data, db_path=db_path)
-            flash("تم حفظ التقرير بنجاح", "success")
             
-            # If user clicked "Save and Publish", auto-build feeds
-            if report_data["status"] == "published":
+            if final_status == "published":
                 rss_generator.build_all_feeds(db_path=db_path)
                 
             return redirect(url_for("report_preview", report_id=report_id))
             
-        return render_template("editor.html", report={}, is_new=True)
+        return render_template("editor.html", report={"status": "draft"}, is_new=True)
 
     @app.route("/reports/<int:report_id>/edit", methods=["GET", "POST"])
     def report_edit(report_id):
@@ -114,6 +128,21 @@ def create_app(test_config=None):
                 flash("يرجى إدخال عنوان التقرير", "danger")
                 return render_template("editor.html", report=request.form, is_new=False, report_id=report_id)
                 
+            requested_status = request.form.get("status", report["status"])
+            explicit_approval = request.form.get("explicit_approval") == "1"
+            
+            # Editorial Safety: Require explicit approval when changing status from draft to published
+            if requested_status == "published":
+                if report["status"] != "published" and not explicit_approval:
+                    final_status = "draft"
+                    flash("تنبيه أمان تحريري: يلزم تأكيد الاعتماد الصريح قبل نشر التقرير للجمهور في خلاصات RSS.", "warning")
+                else:
+                    final_status = "published"
+                    flash("تم حفظ التعديلات والتقرير منشور في خلاصات RSS.", "success")
+            else:
+                final_status = "draft"
+                flash("تم حفظ التقرير كمسودة.", "info")
+                
             update_data = {
                 "title": title,
                 "slug": request.form.get("slug", "").strip(),
@@ -125,14 +154,11 @@ def create_app(test_config=None):
                 "tags": request.form.get("tags", "").strip(),
                 "image_url": request.form.get("image_url", "").strip(),
                 "image_caption": request.form.get("image_caption", "").strip(),
-                "status": request.form.get("status", report["status"])
+                "status": final_status
             }
             
             database.update_report(report_id, update_data, db_path=db_path)
-            flash("تم تحديث بيانات التقرير بنجاح", "success")
-            
-            if update_data["status"] == "published":
-                rss_generator.build_all_feeds(db_path=db_path)
+            rss_generator.build_all_feeds(db_path=db_path)
                 
             return redirect(url_for("report_preview", report_id=report_id))
             
@@ -152,10 +178,22 @@ def create_app(test_config=None):
     def report_toggle_status(report_id):
         report = database.get_report_by_id(report_id, db_path=db_path)
         if report:
-            new_status = "draft" if report["status"] == "published" else "published"
-            database.update_report(report_id, {"status": new_status}, db_path=db_path)
-            rss_generator.build_all_feeds(db_path=db_path)
-            flash(f"تم تغيير حالة التقرير إلى '{'منشور' if new_status == 'published' else 'مسودة'}' وتحديث الخلاصات.", "info")
+            if report["status"] == "published":
+                # Unpublishing back to draft
+                new_status = "draft"
+                database.update_report(report_id, {"status": new_status}, db_path=db_path)
+                rss_generator.build_all_feeds(db_path=db_path)
+                flash("تم تحويل التقرير إلى مسودة وإلغاء نشره من خلاصات RSS.", "info")
+            else:
+                # Require explicit approval confirmation
+                confirmed = request.form.get("confirmed") == "1"
+                if confirmed:
+                    new_status = "published"
+                    database.update_report(report_id, {"status": new_status}, db_path=db_path)
+                    rss_generator.build_all_feeds(db_path=db_path)
+                    flash("تم اعتماد التقرير رسمياً ونشره في خلاصات RSS 2.0 القياسية.", "success")
+                else:
+                    flash("يلزم تأكيد الاعتماد الصريح قبل نشر التقرير في الخلاصات العامة.", "warning")
         return redirect(request.referrer or url_for("dashboard"))
 
     @app.route("/reports/<int:report_id>/delete", methods=["POST"])
@@ -205,28 +243,61 @@ def create_app(test_config=None):
     @app.route("/settings", methods=["GET", "POST"])
     def settings_view():
         if request.method == "POST":
-            for key in ["site_name", "site_slogan", "site_description", "public_base_url", "git_remote", "git_branch", "managing_editor"]:
+            # 1. Base URL validation
+            raw_base_url = request.form.get("public_base_url", "").strip().rstrip("/")
+            if not raw_base_url or not (raw_base_url.startswith("http://") or raw_base_url.startswith("https://")) or "." not in raw_base_url:
+                flash("خطأ في التحقق: رابط النشر الأساسي (Base URL) يجب أن يكون رابطاً صالحاً يبدأ بـ http:// أو https://", "danger")
+                return redirect(url_for("settings_view"))
+                
+            database.set_setting("public_base_url", raw_base_url, db_path=db_path)
+            
+            # 2. Managing Editor Validation
+            raw_editor = request.form.get("managing_editor", "").strip()
+            if raw_editor:
+                if any(p in raw_editor.lower() for p in [".local", "example.com", "test.com", "placeholder"]):
+                    flash("تنبيه أمان: بريد المشرف التحريري يحتوي على نطاق وهمي/محلي (.local). سيتم حجبه تلقائياً من خلاصات RSS العامة حتى يتم تعيين بريد رسمي معتمد.", "warning")
+                database.set_setting("managing_editor", raw_editor, db_path=db_path)
+
+            for key in ["site_name", "site_slogan", "site_description", "git_remote", "git_branch"]:
                 val = request.form.get(key)
                 if val is not None:
                     database.set_setting(key, val.strip(), db_path=db_path)
-            flash("تم حفظ الإعدادات بنجاح", "success")
+                    
+            flash("تم حفظ الإعدادات بنجاح وتحديث المتغيرات.", "success")
             rss_generator.build_all_feeds(db_path=db_path)
             return redirect(url_for("settings_view"))
             
+        current_base_url = database.get_setting("public_base_url", Config.PUBLIC_BASE_URL, db_path=db_path).rstrip("/")
         current_settings = {
             "site_name": database.get_setting("site_name", Config.SITE_NAME, db_path=db_path),
             "site_slogan": database.get_setting("site_slogan", Config.SITE_SLOGAN, db_path=db_path),
             "site_description": database.get_setting("site_description", Config.SITE_DESCRIPTION, db_path=db_path),
-            "public_base_url": database.get_setting("public_base_url", Config.PUBLIC_BASE_URL, db_path=db_path),
+            "public_base_url": current_base_url,
             "git_remote": database.get_setting("git_remote", Config.GIT_REMOTE, db_path=db_path),
             "git_branch": database.get_setting("git_branch", Config.GIT_BRANCH, db_path=db_path),
             "managing_editor": database.get_setting("managing_editor", Config.SITE_MANAGING_EDITOR, db_path=db_path),
             "last_build_time": database.get_setting("last_build_time", "", db_path=db_path)
         }
+        
+        # Public URL Diagnostic status check
+        public_url_status = github_publisher.check_public_url_reachability(f"{current_base_url}/feed.xml")
         logs = database.get_recent_logs(limit=10, db_path=db_path)
-        return render_template("settings.html", settings=current_settings, logs=logs)
+        
+        return render_template(
+            "settings.html",
+            settings=current_settings,
+            logs=logs,
+            public_url_status=public_url_status
+        )
 
     # --- API ENDPOINTS ---
+    
+    @app.route("/api/check-deployment", methods=["GET"])
+    def api_check_deployment():
+        """Check live HTTP availability of public GitHub Pages feed."""
+        base_url = database.get_setting("public_base_url", Config.PUBLIC_BASE_URL, db_path=db_path).rstrip("/")
+        diag = github_publisher.check_public_url_reachability(f"{base_url}/feed.xml")
+        return jsonify(diag)
     
     @app.route("/api/parse-chatgpt", methods=["POST"])
     def api_parse_chatgpt():
