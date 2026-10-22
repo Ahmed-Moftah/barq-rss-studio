@@ -1,7 +1,7 @@
 {
   "site_name": "برق | استوديو التقارير التحريرية",
   "base_url": "https://ahmed-moftah.github.io/barq-rss-studio",
-  "generated_at": "2026-10-22T16:12:16.362012+00:00",
+  "generated_at": "2026-10-22T16:15:31.287415+00:00",
   "master_feed": "https://ahmed-moftah.github.io/barq-rss-studio/feed.xml",
   "category_feeds": [
     {
@@ -14,7 +14,7 @@
       "id": "politics",
       "name": "شؤون سياسية",
       "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/politics.xml",
-      "count": 0
+      "count": 8
     },
     {
       "id": "economy",
@@ -71,5 +71,5 @@
       "count": 0
     }
   ],
-  "published_count": 2
+  "published_count": 10
 }
