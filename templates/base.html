@@ -43,6 +43,12 @@
                     <span class="nav-badge">+</span>
                 </a>
 
+                <a href="{{ url_for('import_chatgpt_view') }}" class="nav-link {% if request.endpoint == 'import_chatgpt_view' %}active{% endif %}">
+                    <span class="icon">📥</span>
+                    <span>استيراد ChatGPT</span>
+                    <span class="nav-badge" style="background: rgba(245, 158, 11, 0.2); color: #f59e0b; font-size: 0.72rem;">دفعة</span>
+                </a>
+
                 <a href="{{ url_for('feeds_overview') }}" class="nav-link {% if request.endpoint == 'feeds_overview' %}active{% endif %}">
                     <span class="icon">📡</span>
                     <span>خلاصات RSS</span>
@@ -111,6 +117,13 @@
                 <p style="font-size: 0.88rem; color: #94a3b8; margin-bottom: 1rem;">
                     الصق مخرجات ChatGPT بصيغة Markdown أو نص منظم (يتضمن العنوان، التصنيف، الموجز والمحتوى)، وسيقوم المحلل باستخراج الحقول تلقائياً.
                 </p>
+                <div style="background: rgba(245, 158, 11, 0.08); border: 1px solid rgba(245, 158, 11, 0.25); border-radius: 8px; padding: 0.75rem 1rem; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                    <span style="font-size: 0.82rem; color: #fbbf24;">تريد استيراد 10-20 تقريراً دفعة واحدة؟</span>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <a href="{{ url_for('import_chatgpt_view') }}" class="btn btn-secondary btn-sm">شاشة الاستيراد المجمع 📥</a>
+                        <a href="{{ url_for('api_import_template') }}" class="btn btn-secondary btn-sm" download>قالب JSON 📄</a>
+                    </div>
+                </div>
                 <div class="form-group">
                     <textarea id="chatgpt-raw-input" class="form-textarea" rows="10" placeholder="# عنوان التقرير: ...&#10;**التصنيف:** تكنولوجيا وابتكار&#10;**الموجز:** ...&#10;**الوسوم:** ذكاء اصطناعي, بيانات&#10;&#10;محتوى التقرير..."></textarea>
                 </div>

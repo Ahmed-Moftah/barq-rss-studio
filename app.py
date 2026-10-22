@@ -1,4 +1,5 @@
 import os
+import json
 from flask import (
     Flask, render_template, request, redirect,
     url_for, flash, jsonify, Response, send_from_directory
@@ -203,6 +204,12 @@ def create_app(test_config=None):
         flash("تم حذف التقرير بنجاح", "success")
         return redirect(url_for("dashboard"))
 
+    @app.route("/import")
+    def import_chatgpt_view():
+        """Batch import interface for 1-20 editorial reports from ChatGPT."""
+        stats = database.get_dashboard_stats(db_path=db_path)
+        return render_template("import.html", stats=stats)
+
     @app.route("/feeds")
     def feeds_overview():
         build_info = rss_generator.build_all_feeds(output_dir=app.config.get("DIST_DIR"), db_path=db_path)
@@ -292,6 +299,85 @@ def create_app(test_config=None):
 
     # --- API ENDPOINTS ---
     
+    @app.route("/api/import/template", methods=["GET"])
+    def api_import_template():
+        """Download standard ChatGPT Bulk Import Template in JSON format."""
+        template_data = importer.get_chatgpt_bulk_import_template()
+        json_content = json.dumps(template_data, ensure_ascii=False, indent=2)
+        return Response(
+            json_content,
+            mimetype="application/json; charset=utf-8",
+            headers={
+                "Content-Disposition": "attachment; filename=chatgpt-bulk-import-template.json"
+            }
+        )
+
+    @app.route("/api/import/preview", methods=["POST"])
+    def api_import_preview():
+        """
+        Accept uploaded JSON file or raw JSON text, parse reports, validate schema,
+        and detect duplicate articles without persisting to database.
+        """
+        raw_content = ""
+        if "file" in request.files:
+            uploaded_file = request.files["file"]
+            if uploaded_file and uploaded_file.filename:
+                try:
+                    raw_content = uploaded_file.read().decode("utf-8")
+                except UnicodeDecodeError:
+                    return jsonify({
+                        "success": False,
+                        "error": "الملف المرفوع ليس ملفاً نصياً صالحاً بترميز UTF-8."
+                    }), 400
+        
+        if not raw_content:
+            data = request.get_json(silent=True) or {}
+            raw_content = data.get("text") or data.get("json_data") or request.form.get("text") or ""
+            
+        if not raw_content:
+            return jsonify({
+                "success": False,
+                "error": "يرجى اختيار ملف JSON أو لصق كود التقارير لمعاينتها."
+            }), 400
+
+        result = importer.parse_bulk_chatgpt_json(raw_content, db_path=db_path)
+        status_code = 200 if result.get("success") else 400
+        return jsonify(result), status_code
+
+    @app.route("/api/import/execute", methods=["POST"])
+    def api_import_execute():
+        """
+        Save selected reports into the database strictly as Drafts.
+        Enforces editorial safety: never publishes automatically.
+        """
+        data = request.get_json(silent=True) or {}
+        reports_to_import = data.get("reports") or []
+        
+        if not reports_to_import or not isinstance(reports_to_import, list):
+            return jsonify({
+                "success": False,
+                "error": "لم يتم تحديد أي تقارير صالحة للاستيراد."
+            }), 400
+
+        if len(reports_to_import) > 20:
+            return jsonify({
+                "success": False,
+                "error": f"الحد الأقصى المسموح به للاستيراد في الدفعة الواحدة هو 20 تقريراً (تم إرسال {len(reports_to_import)})."
+            }), 400
+
+        # Perform bulk creation as drafts
+        result = database.bulk_create_reports(reports_to_import, db_path=db_path)
+        
+        flash(f"تم بنجاح استيراد {result['imported_count']} تقرير كمسودات تحريرية آمنة.", "success")
+        return jsonify({
+            "success": True,
+            "imported_count": result["imported_count"],
+            "failed_count": result["failed_count"],
+            "imported": result["imported"],
+            "failed": result["failed"],
+            "redirect_url": url_for("reports_list", status="draft")
+        })
+
     @app.route("/api/check-deployment", methods=["GET"])
     def api_check_deployment():
         """Check live HTTP availability of public GitHub Pages feed."""
@@ -305,7 +391,29 @@ def create_app(test_config=None):
         data = request.get_json(silent=True) or {}
         raw_text = data.get("text") or request.form.get("text") or ""
         parsed = importer.parse_chatgpt_report(raw_text)
-        return jsonify({"success": True, "data": parsed})
+        
+        # Detect if a bulk payload was pasted into the single report importer
+        is_bulk = False
+        bulk_count = 0
+        trimmed = raw_text.strip()
+        if trimmed.startswith("{") or trimmed.startswith("["):
+            try:
+                loaded = json.loads(trimmed)
+                if isinstance(loaded, dict) and "reports" in loaded and isinstance(loaded["reports"], list):
+                    is_bulk = True
+                    bulk_count = len(loaded["reports"])
+                elif isinstance(loaded, list):
+                    is_bulk = True
+                    bulk_count = len(loaded)
+            except Exception:
+                pass
+                
+        return jsonify({
+            "success": True,
+            "data": parsed,
+            "is_bulk": is_bulk,
+            "bulk_count": bulk_count
+        })
 
     @app.route("/api/publish", methods=["POST"])
     def api_publish():

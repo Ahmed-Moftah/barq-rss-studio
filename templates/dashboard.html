@@ -71,8 +71,8 @@
         <a href="{{ url_for('report_new') }}" class="btn btn-primary">
             <span>تحرير تقرير جديد</span> ✍️
         </a>
-        <a href="{{ url_for('report_new') }}" class="btn btn-secondary" onclick="setTimeout(() => { document.querySelector('[data-modal-target=modal-chatgpt-quick]')?.click(); }, 150);">
-            <span>استيراد تقرير ChatGPT</span> 🤖
+        <a href="{{ url_for('import_chatgpt_view') }}" class="btn btn-secondary">
+            <span>استيراد دفعة ChatGPT (JSON)</span> 🤖
         </a>
         <a href="{{ url_for('feeds_overview') }}" class="btn btn-secondary">
             <span>دليل خلاصات RSS</span> 📡

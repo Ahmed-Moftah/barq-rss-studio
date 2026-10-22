@@ -302,6 +302,89 @@ def count_reports(status=None, category=None, db_path=None):
     conn.close()
     return row["count"] if row else 0
 
+def get_existing_identifiers(db_path=None):
+    """
+    Retrieve all existing slugs and normalized titles for fast duplicate checking.
+    Returns:
+        dict: {
+            'slugs': set of lowercase slugs,
+            'titles': set of normalized titles,
+            'by_slug': {slug: {...}},
+            'by_title': {title: {...}}
+        }
+    """
+    conn = get_connection(db_path)
+    cursor = conn.cursor()
+    cursor.execute("SELECT id, title, slug, category, status FROM reports")
+    rows = cursor.fetchall()
+    conn.close()
+    
+    slugs = set()
+    titles = set()
+    by_slug = {}
+    by_title = {}
+    
+    for r in rows:
+        slug_norm = (r["slug"] or "").strip().lower()
+        title_norm = (r["title"] or "").strip().lower()
+        item = dict(r)
+        if slug_norm:
+            slugs.add(slug_norm)
+            by_slug[slug_norm] = item
+        if title_norm:
+            titles.add(title_norm)
+            by_title[title_norm] = item
+            
+    return {
+        "slugs": slugs,
+        "titles": titles,
+        "by_slug": by_slug,
+        "by_title": by_title
+    }
+
+def bulk_create_reports(reports_data_list, db_path=None):
+    """
+    Create multiple reports safely as drafts in a single batch.
+    Enforces editorial safety: all imported reports are saved with status='draft'.
+    Never overwrites or deletes previously published or draft reports.
+    """
+    imported = []
+    failed = []
+    
+    for item in reports_data_list:
+        try:
+            item_copy = dict(item)
+            # Enforce editorial safety strictly
+            item_copy["status"] = "draft"
+            item_copy["published_at"] = None
+            rep_id = create_report(item_copy, db_path=db_path)
+            imported.append({
+                "id": rep_id,
+                "title": item_copy.get("title", ""),
+                "slug": item_copy.get("slug", ""),
+                "category": item_copy.get("category", "reports")
+            })
+        except Exception as e:
+            failed.append({
+                "title": item.get("title", ""),
+                "error": str(e)
+            })
+            
+    log_publish_action(
+        action="bulk_import",
+        status="success" if not failed else "warning",
+        message=f"تم استيراد {len(imported)} تقرير بنجاح كمسودات تحريرية" + (f" (فشل {len(failed)})" if failed else ""),
+        details=f"المستورد: {[r['id'] for r in imported]}\nالأخطاء: {failed}",
+        db_path=db_path
+    )
+    
+    return {
+        "imported_count": len(imported),
+        "failed_count": len(failed),
+        "imported": imported,
+        "failed": failed
+    }
+
 def get_dashboard_stats(db_path=None):
     """Compile aggregated metrics for the studio dashboard."""
     conn = get_connection(db_path)
