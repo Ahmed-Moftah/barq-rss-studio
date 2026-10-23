@@ -1,7 +1,7 @@
 {
   "site_name": "برق | استوديو التقارير التحريرية",
   "base_url": "https://ahmed-moftah.github.io/barq-rss-studio",
-  "generated_at": "2026-10-22T16:15:31.287415+00:00",
+  "generated_at": "2026-10-23T09:14:17.325825+00:00",
   "master_feed": "https://ahmed-moftah.github.io/barq-rss-studio/feed.xml",
   "category_feeds": [
     {
@@ -11,63 +11,75 @@
       "count": 0
     },
     {
-      "id": "politics",
-      "name": "شؤون سياسية",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/politics.xml",
-      "count": 8
-    },
-    {
-      "id": "economy",
-      "name": "اقتصاد وأعمال",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/economy.xml",
-      "count": 1
-    },
-    {
-      "id": "health",
-      "name": "صحة وعافية",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/health.xml",
-      "count": 0
-    },
-    {
-      "id": "arts",
-      "name": "ثقافة وفنون",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/arts.xml",
-      "count": 0
-    },
-    {
-      "id": "sports",
-      "name": "شؤون رياضية",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/sports.xml",
-      "count": 0
-    },
-    {
-      "id": "tech",
-      "name": "تكنولوجيا وابتكار",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/tech.xml",
-      "count": 1
-    },
-    {
       "id": "news",
-      "name": "أخبار عامة",
+      "name": "أخبار",
       "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/news.xml",
       "count": 0
     },
     {
-      "id": "analysis",
-      "name": "تقديرات موقف",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/analysis.xml",
+      "id": "health",
+      "name": "صحة",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/health.xml",
       "count": 0
     },
     {
-      "id": "reports",
-      "name": "تقارير خاصة",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/reports.xml",
+      "id": "sports",
+      "name": "رياضة",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/sports.xml",
       "count": 0
     },
     {
-      "id": "investigations",
-      "name": "تحقيقات استقصائية",
-      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/investigations.xml",
+      "id": "arts",
+      "name": "فن",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/arts.xml",
+      "count": 0
+    },
+    {
+      "id": "islamic",
+      "name": "إسلاميات",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/islamic.xml",
+      "count": 0
+    },
+    {
+      "id": "economy",
+      "name": "اقتصاد",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/economy.xml",
+      "count": 1
+    },
+    {
+      "id": "women",
+      "name": "امرأة",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/women.xml",
+      "count": 0
+    },
+    {
+      "id": "tech",
+      "name": "تكنولوجيا",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/tech.xml",
+      "count": 1
+    },
+    {
+      "id": "cars",
+      "name": "سيارات",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/cars.xml",
+      "count": 0
+    },
+    {
+      "id": "tourism",
+      "name": "سياحة",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/tourism.xml",
+      "count": 0
+    },
+    {
+      "id": "education",
+      "name": "تعليم",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/education.xml",
+      "count": 0
+    },
+    {
+      "id": "jobs",
+      "name": "وظائف",
+      "url": "https://ahmed-moftah.github.io/barq-rss-studio/feeds/jobs.xml",
       "count": 0
     }
   ],
